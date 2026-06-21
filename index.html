@@ -1,0 +1,4608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UF0606 · Banco de Preguntas — Soluciones Constructivas en Construcciones Metálicas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#13171b;
+    --bg-2:#191e23;
+    --panel:#1d2329;
+    --panel-raised:#252c33;
+    --line:#323a42;
+    --line-soft:#2a3138;
+    --steel:#4488b8;
+    --steel-dim:#2f5a76;
+    --orange:#ff7a1a;
+    --orange-dim:#7a4218;
+    --correct:#46b378;
+    --correct-dim:#1f4631;
+    --wrong:#e2574c;
+    --wrong-dim:#5c2521;
+    --paper:#eef1f4;
+    --muted:#8b96a1;
+    --muted-2:#5d6770;
+    --mono:'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+    --sans:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --display:'Oswald', 'Arial Narrow', sans-serif;
+    --radius: 4px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at top, #1a2026 0%, var(--bg) 55%);
+    color:var(--paper);
+    font-family:var(--sans);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit;}
+
+  /* ---------- Header ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:linear-gradient(180deg, #1c2228 0%, #161a1f 100%);
+    border-bottom:2px solid var(--line);
+    box-shadow:0 6px 18px rgba(0,0,0,.35);
+  }
+  .topbar-inner{
+    max-width:1180px; margin:0 auto;
+    padding:14px 20px 12px;
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex; align-items:center; gap:14px;
+  }
+  .rivet-badge{
+    width:46px; height:46px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #3a4450, #1a1f24 70%);
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-weight:700; font-size:11px; color:var(--steel);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.04), 0 2px 4px rgba(0,0,0,.4);
+    flex:none;
+  }
+  .brand-text .eyebrow{
+    font-family:var(--mono); letter-spacing:.16em; font-size:11px; color:var(--orange);
+    text-transform:uppercase; margin:0 0 2px;
+  }
+  .brand-text h1{
+    font-family:var(--display); font-weight:600; text-transform:uppercase;
+    letter-spacing:.03em; font-size:19px; margin:0; color:var(--paper);
+  }
+  .brand-text p{
+    margin:2px 0 0; font-size:12.5px; color:var(--muted);
+  }
+
+  /* gauge */
+  .gauge-wrap{
+    display:flex; align-items:center; gap:14px;
+  }
+  .gauge-readout{
+    text-align:right; font-family:var(--mono);
+  }
+  .gauge-readout .pct{
+    font-size:28px; font-weight:700; line-height:1; color:var(--paper);
+  }
+  .gauge-readout .pct.zone-low{color:var(--wrong);}
+  .gauge-readout .pct.zone-mid{color:var(--orange);}
+  .gauge-readout .pct.zone-high{color:var(--correct);}
+  .gauge-readout .sub{
+    font-size:11px; color:var(--muted); margin-top:3px; letter-spacing:.02em;
+  }
+  .gauge-svg{width:108px; height:66px; display:block;}
+  #needleGroup{transform-origin:100px 100px; transition:transform .5s cubic-bezier(.34,1.4,.6,1);}
+  .gauge-arc-bg{fill:none; stroke:#2a3138; stroke-width:14; stroke-linecap:butt;}
+  .gauge-zone{fill:none; stroke-width:14; stroke-linecap:butt;}
+  .gauge-needle{stroke:#dfe5ea; stroke-width:3; stroke-linecap:round;}
+  .gauge-hub{fill:#dfe5ea; stroke:#13171b; stroke-width:2;}
+
+  /* progress ruler */
+  .ruler{
+    max-width:1180px; margin:0 auto; padding:0 20px 12px;
+  }
+  .ruler-label{
+    display:flex; justify-content:space-between; font-family:var(--mono);
+    font-size:11px; color:var(--muted); margin-bottom:5px; letter-spacing:.02em;
+  }
+  .ruler-track{
+    position:relative; height:8px; border-radius:2px; background:var(--panel);
+    border:1px solid var(--line); overflow:hidden;
+    background-image:repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 5%);
+  }
+  .ruler-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg, var(--steel-dim), var(--steel));
+    transition:width .4s ease;
+  }
+
+  /* controls */
+  .controls{
+    max-width:1180px; margin:0 auto; padding:0 20px 16px;
+    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+  }
+  .chip{
+    font-family:var(--mono); font-size:12px; letter-spacing:.02em;
+    padding:7px 13px; border-radius:3px; border:1px solid var(--line);
+    background:var(--panel); color:var(--muted); cursor:pointer;
+    transition:border-color .15s, color .15s, background .15s;
+    white-space:nowrap;
+  }
+  .chip:hover{border-color:var(--steel); color:var(--paper);}
+  .chip.active{
+    background:var(--steel-dim); border-color:var(--steel); color:#fff;
+  }
+  .chip.danger{margin-left:auto;}
+  .chip.danger:hover{border-color:var(--wrong); color:var(--wrong);}
+  .chip-sep{width:1px; align-self:stretch; background:var(--line); margin:0 2px;}
+
+  /* ---------- Layout ---------- */
+  main{max-width:1180px; margin:0 auto; padding:8px 20px 100px;}
+
+  .unit-section{margin-top:38px;}
+  .unit-plate{
+    display:flex; align-items:center; gap:16px;
+    background:linear-gradient(180deg, var(--panel-raised), var(--panel));
+    border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 18px; margin-bottom:18px;
+    position:relative;
+  }
+  .unit-plate::before, .unit-plate::after{
+    content:''; position:absolute; width:6px; height:6px; border-radius:50%;
+    background:#0e1114; box-shadow:inset 0 0 0 1px #3a434c, 0 1px 0 rgba(255,255,255,.05);
+    top:8px;
+  }
+  .unit-plate::before{left:8px;}
+  .unit-plate::after{right:8px;}
+  .unit-num{
+    font-family:var(--display); font-size:30px; font-weight:700; color:var(--steel);
+    line-height:1; flex:none; min-width:46px; text-align:center;
+  }
+  .unit-titles h2{
+    margin:0; font-family:var(--display); text-transform:uppercase; letter-spacing:.02em;
+    font-size:17px; color:var(--paper); font-weight:600;
+  }
+  .unit-titles p{
+    margin:3px 0 0; font-size:12px; color:var(--muted); font-family:var(--mono);
+  }
+  .unit-stat{
+    margin-left:auto; text-align:right; font-family:var(--mono); font-size:12px; color:var(--muted);
+    flex:none;
+  }
+  .unit-stat b{color:var(--paper); font-size:14px;}
+
+  .section-divider{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.05em; color:var(--steel);
+    text-transform:uppercase; margin:26px 0 10px; padding-bottom:6px;
+    border-bottom:1px dashed var(--line-soft);
+  }
+
+  /* question card */
+  .qcard{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px 18px 18px; margin-bottom:12px;
+    transition:border-color .25s, box-shadow .25s;
+  }
+  .qcard[data-status="correct"]{border-color:var(--correct-dim); box-shadow:inset 3px 0 0 var(--correct);}
+  .qcard[data-status="wrong"]{border-color:var(--wrong-dim); box-shadow:inset 3px 0 0 var(--wrong);}
+  .qcard.hidden{display:none;}
+
+  .qhead{display:flex; gap:12px; align-items:flex-start; margin-bottom:13px;}
+  .qnum{
+    font-family:var(--mono); font-size:12px; font-weight:600; color:var(--bg);
+    background:var(--muted-2); min-width:30px; height:24px; border-radius:3px;
+    display:flex; align-items:center; justify-content:center; flex:none;
+    transition:background .2s, color .2s;
+  }
+  .qcard[data-status="correct"] .qnum{background:var(--correct); color:#0c1f15;}
+  .qcard[data-status="wrong"] .qnum{background:var(--wrong); color:#260e0b;}
+  .qtext{font-size:15px; color:var(--paper); padding-top:2px; font-weight:500;}
+
+  .options{display:grid; gap:8px;}
+  .opt{
+    display:flex; align-items:center; gap:11px; text-align:left;
+    width:100%; padding:10px 13px; border-radius:3px;
+    background:var(--bg-2); border:1px solid var(--line); color:var(--paper);
+    font-family:var(--sans); font-size:14px; cursor:pointer;
+    transition:border-color .15s, background .15s, transform .1s;
+  }
+  .opt:hover:not(:disabled){border-color:var(--steel); background:#1d2530;}
+  .opt:active:not(:disabled){transform:scale(.997);}
+  .opt:focus-visible{outline:2px solid var(--orange); outline-offset:1px;}
+  .opt .letter{
+    font-family:var(--mono); font-size:11.5px; font-weight:700; color:var(--muted);
+    width:22px; height:22px; border-radius:3px; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; flex:none;
+    transition:all .15s;
+  }
+  .opt .otext{flex:1;}
+  .opt .mark{font-size:14px; flex:none; opacity:0; transition:opacity .15s;}
+
+  .opt:disabled{cursor:default;}
+  .opt.is-selected.is-correct{
+    background:rgba(70,179,120,.12); border-color:var(--correct);
+  }
+  .opt.is-selected.is-correct .letter{background:var(--correct); border-color:var(--correct); color:#0c1f15;}
+  .opt.is-selected.is-correct .mark{opacity:1; color:var(--correct);}
+
+  .opt.is-selected.is-wrong{
+    background:rgba(226,87,76,.12); border-color:var(--wrong);
+  }
+  .opt.is-selected.is-wrong .letter{background:var(--wrong); border-color:var(--wrong); color:#260e0b;}
+  .opt.is-selected.is-wrong .mark{opacity:1; color:var(--wrong);}
+
+  .opt.is-reveal{
+    background:rgba(70,179,120,.07); border-color:var(--correct-dim);
+  }
+  .opt.is-reveal .letter{border-color:var(--correct); color:var(--correct);}
+  .opt.is-reveal .mark{opacity:1; color:var(--correct);}
+
+  .opt.is-dimmed{opacity:.45;}
+
+  .feedback{
+    margin-top:12px; padding:10px 13px; border-radius:3px;
+    font-size:13px; display:flex; gap:9px; align-items:flex-start;
+    font-family:var(--sans);
+  }
+  .feedback.ok{background:rgba(70,179,120,.08); border:1px solid var(--correct-dim); color:#bfe9d2;}
+  .feedback.bad{background:rgba(226,87,76,.08); border:1px solid var(--wrong-dim); color:#f3c9c5;}
+  .feedback b{font-weight:600;}
+  .feedback .note{display:block; margin-top:4px; color:var(--muted); font-style:italic; font-size:12.5px;}
+
+  /* floating next-pending button */
+  .fab{
+    position:fixed; right:22px; bottom:22px; z-index:40;
+    background:var(--steel); color:#fff; border:none; border-radius:30px;
+    padding:12px 18px; font-family:var(--mono); font-size:12.5px; font-weight:600;
+    box-shadow:0 6px 20px rgba(0,0,0,.45); cursor:pointer;
+    display:flex; align-items:center; gap:8px;
+    transition:transform .15s, background .15s;
+  }
+  .fab:hover{background:var(--steel-dim); transform:translateY(-2px);}
+  .fab:focus-visible{outline:2px solid var(--orange); outline-offset:2px;}
+
+  footer{
+    max-width:1180px; margin:0 auto; padding:30px 20px 60px;
+    color:var(--muted-2); font-size:12px; font-family:var(--mono); text-align:center;
+    border-top:1px solid var(--line-soft); margin-top:40px;
+  }
+
+  @media (max-width: 720px){
+    .topbar-inner{flex-direction:column; align-items:flex-start;}
+    .gauge-wrap{align-self:stretch; justify-content:space-between;}
+    .unit-stat{display:none;}
+    .chip.danger{margin-left:0;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="rivet-badge">UF<br>06</div>
+      <div class="brand-text">
+        <p class="eyebrow">MF1147_3 · Examen tipo test</p>
+        <h1>Soluciones Constructivas en Construcciones Metálicas</h1>
+        <p>248 preguntas · 4 unidades didácticas</p>
+      </div>
+    </div>
+    <div class="gauge-wrap">
+      <svg class="gauge-svg" viewBox="0 0 200 120" aria-hidden="true">
+        <path class="gauge-zone" d="M20,100 A80,80 0 0 1 100,20" stroke="#5c2521"></path>
+        <path class="gauge-zone" d="M100,20 A80,80 0 0 1 156.57,43.43" stroke="#7a4218"></path>
+        <path class="gauge-zone" d="M156.57,43.43 A80,80 0 0 1 180,100" stroke="#1f4631"></path>
+        <g id="needleGroup">
+          <line class="gauge-needle" x1="100" y1="100" x2="100" y2="30"></line>
+        </g>
+        <circle class="gauge-hub" cx="100" cy="100" r="6"></circle>
+      </svg>
+      <div class="gauge-readout">
+        <div class="pct" id="pctReadout">0%</div>
+        <div class="sub" id="scoreReadout">0 / 0 aciertos</div>
+      </div>
+    </div>
+  </div>
+  <div class="ruler">
+    <div class="ruler-label">
+      <span>PROGRESO DEL EXAMEN</span>
+      <span id="progressLabel">0 / 248 respondidas</span>
+    </div>
+    <div class="ruler-track"><div class="ruler-fill" id="ruler"></div></div>
+  </div>
+  <div class="controls">
+    <button class="chip active" data-filter="all">Todas · <span id="cntAll">248</span></button>
+    <button class="chip" data-filter="pending">Pendientes · <span id="cntPending">248</span></button>
+    <button class="chip" data-filter="wrong">Falladas · <span id="cntWrong">0</span></button>
+    <button class="chip" data-filter="correct">Acertadas · <span id="cntCorrect">0</span></button>
+    <span class="chip-sep"></span>
+    <button class="chip" data-unit="1">UD1</button>
+    <button class="chip" data-unit="2">UD2</button>
+    <button class="chip" data-unit="3">UD3</button>
+    <button class="chip" data-unit="4">UD4</button>
+    <button class="chip danger" id="resetBtn">⟲ Reiniciar progreso</button>
+  </div>
+</div>
+
+<main id="main"></main>
+
+<button class="fab" id="fab" hidden>↓ Siguiente pregunta sin responder</button>
+
+<footer>
+  UF0606 · MF1147_3 — Banco de preguntas generado para autoevaluación · Tu progreso se guarda automáticamente en este navegador
+</footer>
+
+<script type="application/json" id="quiz-data">[
+ {
+  "id": 1,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1. Concepto de fuerza y su representación",
+  "question": "¿Cuál es la unidad de medida de la fuerza en el Sistema Internacional?",
+  "options": {
+   "a": "El joule",
+   "b": "El pascal",
+   "c": "El newton",
+   "d": "El vatio"
+  },
+  "correct": "c",
+  "correctText": "El newton",
+  "note": null
+ },
+ {
+  "id": 2,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1. Concepto de fuerza y su representación",
+  "question": "Un newton equivale aproximadamente a la fuerza necesaria para levantar del suelo un cuerpo de:",
+  "options": {
+   "a": "1 kilogramo",
+   "b": "100 gramos",
+   "c": "1 tonelada",
+   "d": "10 gramos"
+  },
+  "correct": "b",
+  "correctText": "100 gramos",
+  "note": null
+ },
+ {
+  "id": 3,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1. Concepto de fuerza y su representación",
+  "question": "Las fuerzas en las que el cuerpo que ejerce la fuerza está en contacto directo con el cuerpo sobre el que se aplica se denominan:",
+  "options": {
+   "a": "Fuerzas a distancia",
+   "b": "Fuerzas de contacto",
+   "c": "Fuerzas resultantes",
+   "d": "Fuerzas equilibrantes"
+  },
+  "correct": "b",
+  "correctText": "Fuerzas de contacto",
+  "note": null
+ },
+ {
+  "id": 4,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1. Concepto de fuerza y su representación",
+  "question": "Indica cuál NO es uno de los cuatro elementos que se distinguen al aplicar una fuerza sobre un cuerpo:",
+  "options": {
+   "a": "Dirección",
+   "b": "Sentido",
+   "c": "Masa",
+   "d": "Punto de aplicación"
+  },
+  "correct": "c",
+  "correctText": "Masa",
+  "note": null
+ },
+ {
+  "id": 5,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1. Concepto de fuerza y su representación",
+  "question": "¿Quién enunció los tres principios de la dinámica, intuidos por Galileo?",
+  "options": {
+   "a": "Arquímedes",
+   "b": "Newton",
+   "c": "Pascal",
+   "d": "Einstein"
+  },
+  "correct": "b",
+  "correctText": "Newton",
+  "note": null
+ },
+ {
+  "id": 6,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.1. Inercia",
+  "question": "La resistencia que presenta un cuerpo a modificar su estado de movimiento o de reposo se denomina:",
+  "options": {
+   "a": "Rozamiento",
+   "b": "Gravedad",
+   "c": "Inercia",
+   "d": "Presión"
+  },
+  "correct": "c",
+  "correctText": "Inercia",
+  "note": null
+ },
+ {
+  "id": 7,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.1. Inercia",
+  "question": "Según el principio de inercia, un cuerpo sobre el que no actúa ninguna fuerza permanece en reposo o en:",
+  "options": {
+   "a": "Movimiento acelerado",
+   "b": "Movimiento rectilíneo uniforme",
+   "c": "Movimiento circular",
+   "d": "Caída libre"
+  },
+  "correct": "b",
+  "correctText": "Movimiento rectilíneo uniforme",
+  "note": null
+ },
+ {
+  "id": 8,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.2. Rozamiento",
+  "question": "El rozamiento es una fuerza que:",
+  "options": {
+   "a": "Favorece el movimiento",
+   "b": "Se opone al movimiento",
+   "c": "Solo existe en el espacio",
+   "d": "Aumenta la velocidad de los cuerpos"
+  },
+  "correct": "b",
+  "correctText": "Se opone al movimiento",
+  "note": null
+ },
+ {
+  "id": 9,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.3. Aceleración",
+  "question": "La ecuación fundamental de la dinámica (2º principio) se expresa como:",
+  "options": {
+   "a": "F = m/a",
+   "b": "F = m·a",
+   "c": "a = m·F",
+   "d": "F = a/m"
+  },
+  "correct": "b",
+  "correctText": "F = m·a",
+  "note": null
+ },
+ {
+  "id": 10,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.3. Aceleración",
+  "question": "Según la definición física, un newton es la fuerza necesaria para que un cuerpo de 1 kg adquiera una aceleración de:",
+  "options": {
+   "a": "1 m/s",
+   "b": "1 m/s²",
+   "c": "10 m/s²",
+   "d": "9,8 m/s²"
+  },
+  "correct": "b",
+  "correctText": "1 m/s²",
+  "note": null
+ },
+ {
+  "id": 11,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.4. Dirección de la fuerza",
+  "question": "Si un cuerpo está en reposo, la dirección de la fuerza aplicada:",
+  "options": {
+   "a": "Es siempre perpendicular al desplazamiento",
+   "b": "Coincide con el desplazamiento del cuerpo",
+   "c": "No tiene relación con el desplazamiento",
+   "d": "Es siempre vertical"
+  },
+  "correct": "b",
+  "correctText": "Coincide con el desplazamiento del cuerpo",
+  "note": null
+ },
+ {
+  "id": 12,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.5. Gravedad",
+  "question": "¿Quién formuló la Ley de la Gravitación Universal y en qué año?",
+  "options": {
+   "a": "Galileo, en 1600",
+   "b": "Newton, en 1687",
+   "c": "Arquímedes, en 250 a.C.",
+   "d": "Pascal, en 1650"
+  },
+  "correct": "b",
+  "correctText": "Newton, en 1687",
+  "note": null
+ },
+ {
+  "id": 13,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.5. Gravedad",
+  "question": "Según la Ley de la Gravitación Universal, la fuerza de atracción entre dos cuerpos es:",
+  "options": {
+   "a": "Directamente proporcional al producto de sus masas e inversamente proporcional al cuadrado de la distancia",
+   "b": "Inversamente proporcional al producto de sus masas",
+   "c": "Independiente de la distancia entre ellos",
+   "d": "Directamente proporcional a la distancia"
+  },
+  "correct": "a",
+  "correctText": "Directamente proporcional al producto de sus masas e inversamente proporcional al cuadrado de la distancia",
+  "note": null
+ },
+ {
+  "id": 14,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.6. Peso",
+  "question": "La masa y el peso de un cuerpo:",
+  "options": {
+   "a": "Son magnitudes idénticas",
+   "b": "Son magnitudes diferentes; la masa es invariable y el peso es variable",
+   "c": "Ambas son magnitudes vectoriales invariables",
+   "d": "El peso es escalar y la masa es vectorial"
+  },
+  "correct": "b",
+  "correctText": "Son magnitudes diferentes; la masa es invariable y el peso es variable",
+  "note": null
+ },
+ {
+  "id": 15,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.6. Peso",
+  "question": "La masa es una magnitud:",
+  "options": {
+   "a": "Vectorial",
+   "b": "Escalar",
+   "c": "Variable según la ubicación",
+   "d": "Medida en newtons"
+  },
+  "correct": "b",
+  "correctText": "Escalar",
+  "note": null
+ },
+ {
+  "id": 16,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.7. Presión",
+  "question": "La presión se define como:",
+  "options": {
+   "a": "El producto de la fuerza por la superficie",
+   "b": "El cociente entre la fuerza aplicada y la superficie sobre la que se aplica",
+   "c": "La fuerza dividida por el tiempo",
+   "d": "La masa dividida por el volumen"
+  },
+  "correct": "b",
+  "correctText": "El cociente entre la fuerza aplicada y la superficie sobre la que se aplica",
+  "note": null
+ },
+ {
+  "id": 17,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.7. Presión",
+  "question": "La unidad de presión en el Sistema Internacional es:",
+  "options": {
+   "a": "El newton",
+   "b": "El pascal",
+   "c": "El joule",
+   "d": "El bar"
+  },
+  "correct": "b",
+  "correctText": "El pascal",
+  "note": null
+ },
+ {
+  "id": 18,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.7. Presión",
+  "question": "Un pascal corresponde a la presión ejercida por:",
+  "options": {
+   "a": "Una fuerza de 1 newton sobre una superficie de 1 cm²",
+   "b": "Una fuerza de 1 newton sobre una superficie de 1 m²",
+   "c": "Una fuerza de 10 newton sobre 1 m²",
+   "d": "Una fuerza de 1 kg sobre 1 m²"
+  },
+  "correct": "b",
+  "correctText": "Una fuerza de 1 newton sobre una superficie de 1 m²",
+  "note": null
+ },
+ {
+  "id": 19,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.8. Principio de Arquímedes y presión atmosférica",
+  "question": "Según el Principio de Arquímedes, un cuerpo sumergido en un fluido experimenta un empuje vertical hacia arriba cuyo valor es igual a:",
+  "options": {
+   "a": "El peso del propio cuerpo",
+   "b": "El peso del volumen del líquido desalojado",
+   "c": "La densidad del líquido",
+   "d": "La presión atmosférica"
+  },
+  "correct": "b",
+  "correctText": "El peso del volumen del líquido desalojado",
+  "note": null
+ },
+ {
+  "id": 20,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.8. Principio de Arquímedes y presión atmosférica",
+  "question": "Si el peso de un cuerpo sumergido es mayor que el empuje que recibe, el cuerpo:",
+  "options": {
+   "a": "Flota",
+   "b": "Se hunde",
+   "c": "Permanece en equilibrio neutro",
+   "d": "Sube a la superficie"
+  },
+  "correct": "b",
+  "correctText": "Se hunde",
+  "note": null
+ },
+ {
+  "id": 21,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "1.8. Principio de Arquímedes y presión atmosférica",
+  "question": "La presión atmosférica:",
+  "options": {
+   "a": "Aumenta con la altura",
+   "b": "Disminuye con la altura",
+   "c": "Es constante a cualquier altura",
+   "d": "No depende de la altura"
+  },
+  "correct": "b",
+  "correctText": "Disminuye con la altura",
+  "note": null
+ },
+ {
+  "id": 22,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "2.1. Módulo de un vector (fuerza)",
+  "question": "El módulo de un vector es siempre:",
+  "options": {
+   "a": "Un número positivo, negativo o cero",
+   "b": "Un número positivo o cero",
+   "c": "Un número negativo",
+   "d": "Una magnitud vectorial"
+  },
+  "correct": "b",
+  "correctText": "Un número positivo o cero",
+  "note": null
+ },
+ {
+  "id": 23,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "2.2. Dirección y sentido de un vector (fuerza)",
+  "question": "Dentro de una misma dirección, ¿cuántos sentidos posibles puede tener un vector?",
+  "options": {
+   "a": "Uno",
+   "b": "Dos",
+   "c": "Tres",
+   "d": "Cuatro"
+  },
+  "correct": "b",
+  "correctText": "Dos",
+  "note": null
+ },
+ {
+  "id": 24,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "2.2. Dirección y sentido de un vector (fuerza)",
+  "question": "La resultante de un sistema de fuerzas es:",
+  "options": {
+   "a": "La suma de todas las masas del sistema",
+   "b": "Una fuerza que produce el mismo efecto que todo el conjunto de fuerzas",
+   "c": "La fuerza de mayor módulo del sistema",
+   "d": "Siempre igual a cero"
+  },
+  "correct": "b",
+  "correctText": "Una fuerza que produce el mismo efecto que todo el conjunto de fuerzas",
+  "note": null
+ },
+ {
+  "id": 25,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "2.3. Componentes de una fuerza",
+  "question": "Lo más frecuente al descomponer una fuerza es hacerlo en direcciones:",
+  "options": {
+   "a": "Oblicuas",
+   "b": "Perpendiculares (horizontal y vertical)",
+   "c": "Paralelas entre sí",
+   "d": "Aleatorias"
+  },
+  "correct": "b",
+  "correctText": "Perpendiculares (horizontal y vertical)",
+  "note": null
+ },
+ {
+  "id": 26,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "2.4. Efecto de varias fuerzas",
+  "question": "Cuando varias fuerzas actúan sobre un mismo cuerpo, este conjunto se denomina:",
+  "options": {
+   "a": "Par de fuerzas",
+   "b": "Sistema de fuerzas",
+   "c": "Momento",
+   "d": "Fuerza equilibrante"
+  },
+  "correct": "b",
+  "correctText": "Sistema de fuerzas",
+  "note": null
+ },
+ {
+  "id": 27,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "2.5. Resultante de un sistema de fuerzas",
+  "question": "La resultante de un sistema de fuerzas se puede calcular:",
+  "options": {
+   "a": "Solo de forma gráfica",
+   "b": "Solo de forma analítica",
+   "c": "Tanto de forma gráfica como analítica (matemática)",
+   "d": "Únicamente mediante simulación por ordenador"
+  },
+  "correct": "c",
+  "correctText": "Tanto de forma gráfica como analítica (matemática)",
+  "note": null
+ },
+ {
+  "id": 28,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "2.6. Fuerza equilibrante",
+  "question": "La fuerza equilibrante es aquella que es:",
+  "options": {
+   "a": "Igual y del mismo sentido que la resultante",
+   "b": "Igual y de sentido contrario a la resultante",
+   "c": "El doble de la resultante",
+   "d": "Siempre nula"
+  },
+  "correct": "b",
+  "correctText": "Igual y de sentido contrario a la resultante",
+  "note": null
+ },
+ {
+  "id": 29,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "3.1. Momento",
+  "question": "El momento de una fuerza respecto de un punto se define como:",
+  "options": {
+   "a": "La suma de la fuerza y el brazo",
+   "b": "El producto vectorial del vector posición (brazo) por el vector fuerza",
+   "c": "El cociente entre la fuerza y el brazo",
+   "d": "La resta entre la fuerza y el brazo"
+  },
+  "correct": "b",
+  "correctText": "El producto vectorial del vector posición (brazo) por el vector fuerza",
+  "note": null
+ },
+ {
+  "id": 30,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "3.1. Momento",
+  "question": "La unidad del momento de una fuerza en el Sistema Internacional es:",
+  "options": {
+   "a": "El newton",
+   "b": "El pascal",
+   "c": "El newton por metro (N·m)",
+   "d": "El julio"
+  },
+  "correct": "c",
+  "correctText": "El newton por metro (N·m)",
+  "note": null
+ },
+ {
+  "id": 31,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "3.1. Momento",
+  "question": "Un momento se considera positivo cuando el giro es:",
+  "options": {
+   "a": "En sentido horario",
+   "b": "En sentido antihorario (contrario a las agujas del reloj)",
+   "c": "Indiferente al sentido",
+   "d": "Solo cuando el cuerpo está en reposo"
+  },
+  "correct": "b",
+  "correctText": "En sentido antihorario (contrario a las agujas del reloj)",
+  "note": null
+ },
+ {
+  "id": 32,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "3.1. Momento",
+  "question": "Aunque dimensionalmente el newton por metro equivale al julio, no se utiliza esta unidad para medir momentos porque:",
+  "options": {
+   "a": "El julio es una unidad obsoleta",
+   "b": "El julio es unidad de trabajo o energía (magnitud escalar), mientras que el momento es una magnitud vectorial",
+   "c": "El julio solo se aplica a fuerzas de rozamiento",
+   "d": "No existe relación entre ambas unidades"
+  },
+  "correct": "b",
+  "correctText": "El julio es unidad de trabajo o energía (magnitud escalar), mientras que el momento es una magnitud vectorial",
+  "note": null
+ },
+ {
+  "id": 33,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "3.1. Momento",
+  "question": "El momento de una fuerza también se conoce con el nombre de:",
+  "options": {
+   "a": "Par o torque",
+   "b": "Empuje",
+   "c": "Tensión",
+   "d": "Rozamiento"
+  },
+  "correct": "a",
+  "correctText": "Par o torque",
+  "note": null
+ },
+ {
+  "id": 34,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "3.2. Par",
+  "question": "Un par de fuerzas está formado por:",
+  "options": {
+   "a": "Dos fuerzas perpendiculares de distinta intensidad",
+   "b": "Dos fuerzas paralelas, de igual intensidad, separadas por una distancia y de sentido contrario",
+   "c": "Una sola fuerza aplicada en dos puntos",
+   "d": "Dos fuerzas convergentes en un punto"
+  },
+  "correct": "b",
+  "correctText": "Dos fuerzas paralelas, de igual intensidad, separadas por una distancia y de sentido contrario",
+  "note": null
+ },
+ {
+  "id": 35,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "3.2. Par",
+  "question": "La fuerza resultante de un par de fuerzas es:",
+  "options": {
+   "a": "El doble de cada fuerza componente",
+   "b": "Cero",
+   "c": "Igual a una de las fuerzas",
+   "d": "Variable según el ángulo"
+  },
+  "correct": "b",
+  "correctText": "Cero",
+  "note": null
+ },
+ {
+  "id": 36,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "3.2. Par",
+  "question": "El efecto producido por un par de fuerzas es:",
+  "options": {
+   "a": "Una traslación",
+   "b": "Una rotación respecto a un eje perpendicular al plano que las contiene",
+   "c": "Una deformación permanente",
+   "d": "Un aumento de masa"
+  },
+  "correct": "b",
+  "correctText": "Una rotación respecto a un eje perpendicular al plano que las contiene",
+  "note": null
+ },
+ {
+  "id": 37,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "4.1. Centro de gravedad",
+  "question": "El centro de gravedad de un cuerpo es el punto respecto del cual:",
+  "options": {
+   "a": "La masa es máxima",
+   "b": "Las fuerzas de gravedad producen un momento resultante nulo",
+   "c": "La fuerza de rozamiento es nula",
+   "d": "El peso es igual a la masa"
+  },
+  "correct": "b",
+  "correctText": "Las fuerzas de gravedad producen un momento resultante nulo",
+  "note": null
+ },
+ {
+  "id": 38,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "4.1. Centro de gravedad",
+  "question": "En una esfera hueca, el centro de gravedad se encuentra:",
+  "options": {
+   "a": "En la superficie de la esfera",
+   "b": "En el centro de la esfera, aunque no pertenezca al cuerpo material",
+   "c": "No existe centro de gravedad",
+   "d": "Siempre fuera de la esfera"
+  },
+  "correct": "b",
+  "correctText": "En el centro de la esfera, aunque no pertenezca al cuerpo material",
+  "note": null
+ },
+ {
+  "id": 39,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "4.1. Centro de gravedad",
+  "question": "El centro de masas coincide con el centro de gravedad solo cuando:",
+  "options": {
+   "a": "El cuerpo es esférico",
+   "b": "El campo gravitatorio es uniforme",
+   "c": "El cuerpo está en movimiento",
+   "d": "La masa es muy pequeña"
+  },
+  "correct": "b",
+  "correctText": "El campo gravitatorio es uniforme",
+  "note": null
+ },
+ {
+  "id": 40,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "4.1. Centro de gravedad",
+  "question": "Un objeto apoyado sobre una base plana está en equilibrio estable cuando:",
+  "options": {
+   "a": "Su masa es mínima",
+   "b": "La vertical que pasa por el centro de gravedad corta a la base de apoyo",
+   "c": "El centro de gravedad está fuera del cuerpo",
+   "d": "No existe rozamiento"
+  },
+  "correct": "b",
+  "correctText": "La vertical que pasa por el centro de gravedad corta a la base de apoyo",
+  "note": null
+ },
+ {
+  "id": 41,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "4.2. Determinación del centro de gravedad",
+  "question": "La dimensión fundamental de los momentos utilizados para hallar el centro de gravedad es:",
+  "options": {
+   "a": "Masa por tiempo",
+   "b": "Fuerza por distancia",
+   "c": "Volumen por densidad",
+   "d": "Fuerza por tiempo"
+  },
+  "correct": "b",
+  "correctText": "Fuerza por distancia",
+  "note": null
+ },
+ {
+  "id": 42,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "4.2. Determinación del centro de gravedad",
+  "question": "El centro de gravedad de un objeto compuesto puede calcularse si se conocen:",
+  "options": {
+   "a": "Solo el volumen total",
+   "b": "Los CG de cada componente",
+   "c": "Únicamente la densidad media",
+   "d": "Solo el peso total, sin posiciones"
+  },
+  "correct": "b",
+  "correctText": "Los CG de cada componente",
+  "note": null
+ },
+ {
+  "id": 43,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "4.2.1. CG a lo largo de un solo eje",
+  "question": "La posición del centro de gravedad a lo largo de un eje se determina:",
+  "options": {
+   "a": "Multiplicando todas las masas entre sí",
+   "b": "Sumando los momentos presentes alrededor del eje de referencia y dividiendo por el peso total",
+   "c": "Calculando solo la media aritmética de las distancias",
+   "d": "Mediante el coeficiente de seguridad"
+  },
+  "correct": "b",
+  "correctText": "Sumando los momentos presentes alrededor del eje de referencia y dividiendo por el peso total",
+  "note": null
+ },
+ {
+  "id": 44,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "4.2.2. CG de un cuerpo 3D asimétrico",
+  "question": "Para calcular el CG de un cuerpo 3D que no está catalogado en manuales ni puede descomponerse en formas conocidas, es necesario recurrir a:",
+  "options": {
+   "a": "Tablas de perfiles laminados",
+   "b": "El cálculo integral (momentos de porciones infinitesimales)",
+   "c": "El coeficiente de Poisson",
+   "d": "El método de Cremona"
+  },
+  "correct": "b",
+  "correctText": "El cálculo integral (momentos de porciones infinitesimales)",
+  "note": null
+ },
+ {
+  "id": 45,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.1. Momento de inercia",
+  "question": "Según la RAE, la inercia es la propiedad de los cuerpos de:",
+  "options": {
+   "a": "Acelerar continuamente",
+   "b": "No modificar su estado de reposo o movimiento si no es por la acción de una fuerza",
+   "c": "Perder masa con el tiempo",
+   "d": "Aumentar su peso con la temperatura"
+  },
+  "correct": "b",
+  "correctText": "No modificar su estado de reposo o movimiento si no es por la acción de una fuerza",
+  "note": null
+ },
+ {
+  "id": 46,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.1. Momento de inercia",
+  "question": "Estrictamente hablando, la inercia (momento de inercia) es la resistencia a:",
+  "options": {
+   "a": "Los cambios de temperatura",
+   "b": "Los cambios en la rotación de un objeto",
+   "c": "La corrosión",
+   "d": "La deformación plástica"
+  },
+  "correct": "b",
+  "correctText": "Los cambios en la rotación de un objeto",
+  "note": null
+ },
+ {
+  "id": 47,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.1. Momento de inercia",
+  "question": "En resistencia de materiales, ¿por qué es preferible diseñar estructuras con una alta inercia?",
+  "options": {
+   "a": "Porque reduce el peso de la estructura",
+   "b": "Porque la inercia es inversamente proporcional a la tensión que sufre la sección, minimizando así la solicitación",
+   "c": "Porque aumenta el rozamiento",
+   "d": "Porque reduce el coste de los materiales"
+  },
+  "correct": "b",
+  "correctText": "Porque la inercia es inversamente proporcional a la tensión que sufre la sección, minimizando así la solicitación",
+  "note": null
+ },
+ {
+  "id": 48,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.1. Momento de inercia",
+  "question": "El motivo por el que se utilizan vigas con sección de doble T es:",
+  "options": {
+   "a": "Por motivos estéticos únicamente",
+   "b": "Porque al ser la inercia proporcional a la distancia, es preferible situar el material lo más alejado posible del centro de gravedad",
+   "c": "Para reducir el coste de fabricación",
+   "d": "Porque son más fáciles de transportar"
+  },
+  "correct": "b",
+  "correctText": "Porque al ser la inercia proporcional a la distancia, es preferible situar el material lo más alejado posible del centro de gravedad",
+  "note": null
+ },
+ {
+  "id": 49,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.2. Momento resistente",
+  "question": "El momento resistente también se denomina:",
+  "options": {
+   "a": "Módulo de inercia o módulo resistente",
+   "b": "Coeficiente de seguridad",
+   "c": "Módulo de Young",
+   "d": "Radio de giro"
+  },
+  "correct": "a",
+  "correctText": "Módulo de inercia o módulo resistente",
+  "note": null
+ },
+ {
+  "id": 50,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.2. Momento resistente",
+  "question": "El momento resistente se define como el cociente entre:",
+  "options": {
+   "a": "La masa y la distancia",
+   "b": "El momento de inercia y la distancia máxima",
+   "c": "La fuerza y la superficie",
+   "d": "El módulo de Young y el coeficiente de Poisson"
+  },
+  "correct": "b",
+  "correctText": "El momento de inercia y la distancia máxima",
+  "note": null
+ },
+ {
+  "id": 51,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.2. Momento resistente",
+  "question": "El momento resistente flexional se designa habitualmente con la letra:",
+  "options": {
+   "a": "J",
+   "b": "K",
+   "c": "W",
+   "d": "G"
+  },
+  "correct": "c",
+  "correctText": "W",
+  "note": null
+ },
+ {
+  "id": 52,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.1. Momento de inercia de una distribución de masas puntuales",
+  "question": "Para una distribución de masas puntuales, el momento de inercia se calcula mediante la fórmula I = Σ xᵢ²·mᵢ, donde xᵢ representa:",
+  "options": {
+   "a": "La masa de cada partícula",
+   "b": "La distancia de la partícula al eje de rotación",
+   "c": "La velocidad de la partícula",
+   "d": "El tiempo transcurrido"
+  },
+  "correct": "b",
+  "correctText": "La distancia de la partícula al eje de rotación",
+  "note": null
+ },
+ {
+  "id": 53,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.1. Momento de inercia de una distribución de masas puntuales",
+  "question": "Para relacionar el momento de inercia respecto a distintos ejes paralelos se utiliza:",
+  "options": {
+   "a": "La ley de Hooke",
+   "b": "El teorema de Steiner",
+   "c": "El principio de Arquímedes",
+   "d": "La ley de Pascal"
+  },
+  "correct": "b",
+  "correctText": "El teorema de Steiner",
+  "note": null
+ },
+ {
+  "id": 54,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.2. Momento de inercia de una distribución continua de masa",
+  "question": "En una distribución continua de masa, el momento de inercia se calcula mediante:",
+  "options": {
+   "a": "Una suma finita de masas puntuales",
+   "b": "La integral I = ∫x²dm",
+   "c": "El producto de la masa total por el radio",
+   "d": "La media aritmética de las distancias"
+  },
+  "correct": "b",
+  "correctText": "La integral I = ∫x²dm",
+  "note": null
+ },
+ {
+  "id": 55,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.3. Momento de inercia de una varilla",
+  "question": "El momento de inercia de una varilla delgada de masa M y longitud L respecto de un eje perpendicular que pasa por su centro de masas es:",
+  "options": {
+   "a": "M·L²",
+   "b": "M·L²/12",
+   "c": "M·L²/3",
+   "d": "M·L²/2"
+  },
+  "correct": "b",
+  "correctText": "M·L²/12",
+  "note": null
+ },
+ {
+  "id": 56,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.3. Momento de inercia de una varilla",
+  "question": "El momento de inercia de la misma varilla, pero respecto de un eje perpendicular que pasa por uno de sus extremos, es:",
+  "options": {
+   "a": "M·L²/12",
+   "b": "M·L²/3",
+   "c": "M·L²/2",
+   "d": "M·L²"
+  },
+  "correct": "b",
+  "correctText": "M·L²/3",
+  "note": null
+ },
+ {
+  "id": 57,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.4. Momento de inercia de un disco",
+  "question": "El momento de inercia de un disco de masa M y radio R respecto de un eje perpendicular al plano del disco que pasa por su centro es:",
+  "options": {
+   "a": "M·R²",
+   "b": "(1/2)·M·R²",
+   "c": "(1/4)·M·R²",
+   "d": "(2/3)·M·R²"
+  },
+  "correct": "b",
+  "correctText": "(1/2)·M·R²",
+  "note": null
+ },
+ {
+  "id": 58,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.5. Momento de inercia de un cilindro",
+  "question": "El momento de inercia de un cilindro de masa M y radio R respecto de su propio eje longitudinal es:",
+  "options": {
+   "a": "M·R²",
+   "b": "(1/2)·M·R²",
+   "c": "(1/3)·M·R²",
+   "d": "(1/12)·M·R²"
+  },
+  "correct": "b",
+  "correctText": "(1/2)·M·R²",
+  "note": null
+ },
+ {
+  "id": 59,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.6. Momento de inercia de una placa rectangular",
+  "question": "Para hallar el momento de inercia de una placa rectangular delgada, el elemento de masa que se toma es:",
+  "options": {
+   "a": "Un anillo de radio x",
+   "b": "Un rectángulo de longitud a y anchura dx",
+   "c": "Una esfera diferencial",
+   "d": "Un disco de espesor dx"
+  },
+  "correct": "b",
+  "correctText": "Un rectángulo de longitud a y anchura dx",
+  "note": null
+ },
+ {
+  "id": 60,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.7. Momento de inercia de un disco (respecto a un diámetro)",
+  "question": "Para calcular el momento de inercia de un disco respecto a uno de sus diámetros, se realiza un cambio de variable utilizando funciones:",
+  "options": {
+   "a": "Logarítmicas",
+   "b": "Trigonométricas (seno y coseno)",
+   "c": "Exponenciales",
+   "d": "Lineales"
+  },
+  "correct": "b",
+  "correctText": "Trigonométricas (seno y coseno)",
+  "note": null
+ },
+ {
+  "id": 61,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.8. Momento de inercia de una esfera",
+  "question": "Para calcular el momento de inercia de una esfera respecto a uno de sus diámetros, el método consiste en:",
+  "options": {
+   "a": "Dividir la esfera en discos de radio x y espesor dz",
+   "b": "Considerarla como una masa puntual",
+   "c": "Aplicar directamente la fórmula del cilindro",
+   "d": "Usar solo el teorema de Steiner"
+  },
+  "correct": "a",
+  "correctText": "Dividir la esfera en discos de radio x y espesor dz",
+  "note": null
+ },
+ {
+  "id": 62,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.9. Momento de inercia de un cilindro (eje perpendicular a la generatriz)",
+  "question": "Para calcular el momento de inercia de un cilindro respecto a un eje perpendicular a su generatriz que pasa por su centro, se divide el cilindro en:",
+  "options": {
+   "a": "Esferas concéntricas",
+   "b": "Discos de radio R y espesor dx, aplicando el teorema de Steiner",
+   "c": "Varillas longitudinales",
+   "d": "Placas cuadradas"
+  },
+  "correct": "b",
+  "correctText": "Discos de radio R y espesor dx, aplicando el teorema de Steiner",
+  "note": null
+ },
+ {
+  "id": 63,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "5.3.10. Momento de inercia de un paralelepípedo",
+  "question": "Para hallar el momento de inercia de un paralelepípedo respecto a un eje perpendicular a una de sus caras, se divide el sólido en:",
+  "options": {
+   "a": "Discos circulares",
+   "b": "Placas rectangulares de lados a y b y espesor dx",
+   "c": "Esferas de radio variable",
+   "d": "Anillos concéntricos"
+  },
+  "correct": "b",
+  "correctText": "Placas rectangulares de lados a y b y espesor dx",
+  "note": null
+ },
+ {
+  "id": 64,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "6. Radio de giro de los perfiles",
+  "question": "El radio de giro se define como:",
+  "options": {
+   "a": "La distancia desde el eje de giro a un punto donde se podría suponer concentrada toda la masa del cuerpo",
+   "b": "El doble del momento de inercia",
+   "c": "La masa total dividida por el área",
+   "d": "El módulo resistente de la sección"
+  },
+  "correct": "a",
+  "correctText": "La distancia desde el eje de giro a un punto donde se podría suponer concentrada toda la masa del cuerpo",
+  "note": null
+ },
+ {
+  "id": 65,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "6. Radio de giro de los perfiles",
+  "question": "La fórmula del radio de giro respecto al eje i se expresa como:",
+  "options": {
+   "a": "iᵢ = Iᵢ · A",
+   "b": "iᵢ = √(Iᵢ/A)",
+   "c": "iᵢ = A/Iᵢ",
+   "d": "iᵢ = Iᵢ²/A"
+  },
+  "correct": "b",
+  "correctText": "iᵢ = √(Iᵢ/A)",
+  "note": null
+ },
+ {
+  "id": 66,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "7. Tablas de perfiles laminados",
+  "question": "¿Cuáles de las siguientes son denominaciones de perfiles laminados recogidas en las tablas del manual? (señala la incorrecta)",
+  "options": {
+   "a": "IPN, IPE",
+   "b": "HEB, HEA, HEM",
+   "c": "UPN",
+   "d": "CTE"
+  },
+  "correct": "d",
+  "correctText": "CTE",
+  "note": "el CTE es una normativa, no un perfil laminado"
+ },
+ {
+  "id": 67,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "7. Tablas de perfiles laminados",
+  "question": "En las tablas de perfiles, el símbolo \"A\" representa habitualmente:",
+  "options": {
+   "a": "El área de la sección",
+   "b": "El ángulo de torsión",
+   "c": "La aceleración",
+   "d": "La amplitud de onda"
+  },
+  "correct": "a",
+  "correctText": "El área de la sección",
+  "note": null
+ },
+ {
+  "id": 68,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "7. Tablas de perfiles laminados",
+  "question": "En las tablas de perfiles, el símbolo \"p\" representa habitualmente:",
+  "options": {
+   "a": "La presión atmosférica",
+   "b": "El peso por metro (peso porm)",
+   "c": "El perímetro",
+   "d": "El coeficiente de Poisson"
+  },
+  "correct": "b",
+  "correctText": "El peso por metro (peso porm)",
+  "note": null
+ },
+ {
+  "id": 69,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "7. Tablas de perfiles laminados",
+  "question": "¿Cuál de los siguientes es un tipo de perfil angular descrito en las tablas?",
+  "options": {
+   "a": "Perfil L (angulares de lados iguales o desiguales)",
+   "b": "Perfil HEB",
+   "c": "Perfil IPN",
+   "d": "Perfil UPN"
+  },
+  "correct": "a",
+  "correctText": "Perfil L (angulares de lados iguales o desiguales)",
+  "note": null
+ },
+ {
+  "id": 70,
+  "unit": "1",
+  "unitName": "Elementos que intervienen en el cálculo de calderería y estructuras metálicas",
+  "section": "7. Tablas de perfiles laminados",
+  "question": "Los perfiles huecos (cuadrados, rectangulares y circulares) se incluyen en el apartado:",
+  "options": {
+   "a": "7.5 de las tablas",
+   "b": "7.12 de las tablas",
+   "c": "7.1 de las tablas",
+   "d": "7.9 de las tablas"
+  },
+  "correct": "b",
+  "correctText": "7.12 de las tablas",
+  "note": null
+ },
+ {
+  "id": 71,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1. Tracción",
+  "question": "Las fuerzas que tienden a estirar una barra, separando sus partículas, se denominan:",
+  "options": {
+   "a": "Fuerzas de compresión",
+   "b": "Fuerzas de tracción",
+   "c": "Fuerzas de torsión",
+   "d": "Fuerzas de cortadura"
+  },
+  "correct": "b",
+  "correctText": "Fuerzas de tracción",
+  "note": null
+ },
+ {
+  "id": 72,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.1. Tensión admisible",
+  "question": "La tensión admisible o tensión de trabajo se define como:",
+  "options": {
+   "a": "La tensión máxima que puede soportar un material sin romperse",
+   "b": "La tensión que asegura que no se produzcan deformaciones permanentes y debe ser inferior a la producida por las fuerzas exteriores",
+   "c": "El doble del límite elástico",
+   "d": "La tensión de rotura dividida por dos"
+  },
+  "correct": "b",
+  "correctText": "La tensión que asegura que no se produzcan deformaciones permanentes y debe ser inferior a la producida por las fuerzas exteriores",
+  "note": null
+ },
+ {
+  "id": 73,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.1. Tensión admisible",
+  "question": "La tensión admisible se obtiene como el cociente entre:",
+  "options": {
+   "a": "El límite elástico y el coeficiente de seguridad",
+   "b": "La tensión de rotura y la masa",
+   "c": "El módulo de Young y el área",
+   "d": "La carga y el tiempo"
+  },
+  "correct": "a",
+  "correctText": "El límite elástico y el coeficiente de seguridad",
+  "note": null
+ },
+ {
+  "id": 74,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.2. Límite elástico",
+  "question": "El límite elástico (o límite de elasticidad) es:",
+  "options": {
+   "a": "La tensión hasta la cual no se presentan deformaciones permanentes",
+   "b": "La tensión máxima absoluta antes de la rotura",
+   "c": "La tensión mínima de trabajo",
+   "d": "El módulo de rigidez del material"
+  },
+  "correct": "a",
+  "correctText": "La tensión hasta la cual no se presentan deformaciones permanentes",
+  "note": null
+ },
+ {
+  "id": 75,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.2. Límite elástico",
+  "question": "El módulo de elasticidad de un material es la relación entre:",
+  "options": {
+   "a": "La masa y el volumen",
+   "b": "Las tensiones y las deformaciones correspondientes",
+   "c": "La fuerza y el tiempo",
+   "d": "El área y el perímetro"
+  },
+  "correct": "b",
+  "correctText": "Las tensiones y las deformaciones correspondientes",
+  "note": null
+ },
+ {
+  "id": 76,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.3. Coeficiente de seguridad",
+  "question": "El coeficiente de seguridad (divisor S) sirve para:",
+  "options": {
+   "a": "Aumentar la tensión de rotura",
+   "b": "Impedir que un material pueda exceder su límite elástico, limitando el esfuerzo a una fracción de éste",
+   "c": "Calcular el peso propio de la estructura",
+   "d": "Medir el rozamiento"
+  },
+  "correct": "b",
+  "correctText": "Impedir que un material pueda exceder su límite elástico, limitando el esfuerzo a una fracción de éste",
+  "note": null
+ },
+ {
+  "id": 77,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.3. Coeficiente de seguridad",
+  "question": "En el hierro y el acero, el coeficiente de seguridad S suele variar entre:",
+  "options": {
+   "a": "7 y 20",
+   "b": "2 y 1,5 (o de 2 a 2)",
+   "c": "50 y 100",
+   "d": "0,1 y 0,5"
+  },
+  "correct": "b",
+  "correctText": "2 y 1,5 (o de 2 a 2)",
+  "note": null
+ },
+ {
+  "id": 78,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.4. Coeficiente de Poisson",
+  "question": "El coeficiente de Poisson relaciona:",
+  "options": {
+   "a": "La deformación lateral y la deformación axial en una probeta con carga axial",
+   "b": "La masa y el volumen",
+   "c": "La presión y la temperatura",
+   "d": "El área y el momento de inercia"
+  },
+  "correct": "a",
+  "correctText": "La deformación lateral y la deformación axial en una probeta con carga axial",
+  "note": null
+ },
+ {
+  "id": 79,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.4. Coeficiente de Poisson",
+  "question": "El coeficiente de Poisson relaciona el módulo de Young (E) y el módulo de rigidez (G) mediante una fórmula en la que también interviene:",
+  "options": {
+   "a": "El número v (coeficiente de Poisson) en el denominador 2(1+v)",
+   "b": "Únicamente la masa",
+   "c": "El coeficiente de seguridad",
+   "d": "La tensión de rotura"
+  },
+  "correct": "a",
+  "correctText": "El número v (coeficiente de Poisson) en el denominador 2(1+v)",
+  "note": null
+ },
+ {
+  "id": 80,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.5. Módulo de Young",
+  "question": "El módulo de Young o módulo de elasticidad es una constante de proporcionalidad característica de cada material que relaciona:",
+  "options": {
+   "a": "El esfuerzo F/S y la deformación unitaria ΔL/L₀",
+   "b": "La masa y la aceleración",
+   "c": "El área y el perímetro",
+   "d": "La presión y el volumen"
+  },
+  "correct": "a",
+  "correctText": "El esfuerzo F/S y la deformación unitaria ΔL/L₀",
+  "note": null
+ },
+ {
+  "id": 81,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.5. Módulo de Young",
+  "question": "De los materiales citados en la tabla del manual, ¿cuál presenta mayor módulo de Young?",
+  "options": {
+   "a": "Aluminio",
+   "b": "Plata",
+   "c": "Acero al carbono",
+   "d": "Cinc laminado"
+  },
+  "correct": "c",
+  "correctText": "Acero al carbono",
+  "note": null
+ },
+ {
+  "id": 82,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.6. Módulo de rigidez",
+  "question": "La rigidez se define como:",
+  "options": {
+   "a": "La capacidad de un objeto sólido o elemento estructural para soportar esfuerzos sin adquirir grandes deformaciones o desplazamientos",
+   "b": "La masa por unidad de volumen",
+   "c": "El cociente entre el peso y el área",
+   "d": "La resistencia al desgaste superficial"
+  },
+  "correct": "a",
+  "correctText": "La capacidad de un objeto sólido o elemento estructural para soportar esfuerzos sin adquirir grandes deformaciones o desplazamientos",
+  "note": null
+ },
+ {
+  "id": 83,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "1.6. Módulo de rigidez",
+  "question": "El coeficiente de rigidez K se calcula normalmente como la razón entre:",
+  "options": {
+   "a": "Una fuerza aplicada F y el desplazamiento obtenido δ",
+   "b": "La masa y el tiempo",
+   "c": "El área y el momento de inercia",
+   "d": "La presión y la densidad"
+  },
+  "correct": "a",
+  "correctText": "Una fuerza aplicada F y el desplazamiento obtenido δ",
+  "note": null
+ },
+ {
+  "id": 84,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "2. Compresión",
+  "question": "El esfuerzo de compresión se caracteriza porque tiende a:",
+  "options": {
+   "a": "Aumentar el volumen del cuerpo",
+   "b": "Reducir el volumen del cuerpo y acortarlo en determinada dirección",
+   "c": "Alargar el cuerpo indefinidamente",
+   "d": "Producir torsión pura"
+  },
+  "correct": "b",
+  "correctText": "Reducir el volumen del cuerpo y acortarlo en determinada dirección",
+  "note": null
+ },
+ {
+  "id": 85,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "2.1. Pandeo",
+  "question": "El pandeo es:",
+  "options": {
+   "a": "El alargamiento de una barra sometida a tracción",
+   "b": "La curva o flexión que se produce en la mitad de una viga o muro debido a la compresión",
+   "c": "La rotura por cortadura",
+   "d": "El giro de un cuerpo sobre su eje"
+  },
+  "correct": "b",
+  "correctText": "La curva o flexión que se produce en la mitad de una viga o muro debido a la compresión",
+  "note": null
+ },
+ {
+  "id": 86,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "3. Cortadura",
+  "question": "La cortadura o cizallamiento se produce cuando:",
+  "options": {
+   "a": "Se aplican fuerzas perpendiculares a la pieza, haciendo que las partículas tiendan a resbalar unas sobre otras",
+   "b": "Se aplica una fuerza de tracción pura",
+   "c": "El cuerpo gira sobre su propio eje",
+   "d": "Se calienta el material hasta su punto de fusión"
+  },
+  "correct": "a",
+  "correctText": "Se aplican fuerzas perpendiculares a la pieza, haciendo que las partículas tiendan a resbalar unas sobre otras",
+  "note": null
+ },
+ {
+  "id": 87,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "3. Cortadura",
+  "question": "Un ejemplo típico de esfuerzo de cortadura mencionado en el manual es:",
+  "options": {
+   "a": "El cable de una grúa sosteniendo un peso",
+   "b": "La zona de unión entre una viga y un pilar, o el trampolín de piscina con la torre",
+   "c": "Una varilla sometida a calor",
+   "d": "Un muelle en reposo"
+  },
+  "correct": "b",
+  "correctText": "La zona de unión entre una viga y un pilar, o el trampolín de piscina con la torre",
+  "note": null
+ },
+ {
+  "id": 88,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "4. Flexión",
+  "question": "Las fuerzas que actúan sobre una barra y tienden a hacer que se combe se denominan fuerzas de:",
+  "options": {
+   "a": "Cortadura",
+   "b": "Flexión",
+   "c": "Torsión",
+   "d": "Compresión pura"
+  },
+  "correct": "b",
+  "correctText": "Flexión",
+  "note": null
+ },
+ {
+  "id": 89,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "4. Flexión",
+  "question": "La flexión es una combinación de:",
+  "options": {
+   "a": "Tracción y torsión",
+   "b": "Compresión y tracción",
+   "c": "Cortadura y rozamiento",
+   "d": "Presión y temperatura"
+  },
+  "correct": "b",
+  "correctText": "Compresión y tracción",
+  "note": null
+ },
+ {
+  "id": 90,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "4.1. Fibra neutra",
+  "question": "La fibra neutra es la línea imaginaria que pasa por el centro de gravedad de la sección transversal en la que:",
+  "options": {
+   "a": "Se produce la máxima compresión",
+   "b": "No se producen esfuerzos de flexión ni deformación alguna",
+   "c": "Se concentra toda la tracción",
+   "d": "Se produce la rotura"
+  },
+  "correct": "b",
+  "correctText": "No se producen esfuerzos de flexión ni deformación alguna",
+  "note": null
+ },
+ {
+  "id": 91,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "4.1. Fibra neutra",
+  "question": "En una pieza sometida a flexión, las fibras superiores normalmente trabajan a:",
+  "options": {
+   "a": "Tracción",
+   "b": "Compresión",
+   "c": "Cortadura",
+   "d": "Torsión"
+  },
+  "correct": "b",
+  "correctText": "Compresión",
+  "note": null
+ },
+ {
+  "id": 92,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "4.1. Fibra neutra",
+  "question": "En una pieza sometida a flexión, las fibras inferiores normalmente trabajan a:",
+  "options": {
+   "a": "Compresión",
+   "b": "Tracción",
+   "c": "Cortadura",
+   "d": "Pandeo"
+  },
+  "correct": "b",
+  "correctText": "Tracción",
+  "note": null
+ },
+ {
+  "id": 93,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "4.2. Esfuerzos y momentos de una viga",
+  "question": "Una viga se define como un elemento estructural en el que:",
+  "options": {
+   "a": "Todas sus dimensiones son iguales",
+   "b": "Una de sus dimensiones es mucho mayor que las otras dos",
+   "c": "Solo existe una dimensión",
+   "d": "Las tres dimensiones son despreciables"
+  },
+  "correct": "b",
+  "correctText": "Una de sus dimensiones es mucho mayor que las otras dos",
+  "note": null
+ },
+ {
+  "id": 94,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "4.3.1. Carga puntual / 4.3.2. Carga continua",
+  "question": "En función de la distribución, las cargas que actúan sobre una viga pueden clasificarse en:",
+  "options": {
+   "a": "Cargas fijas y variables",
+   "b": "Carga puntual y carga continua",
+   "c": "Cargas térmicas y reológicas",
+   "d": "Cargas accidentales y permanentes"
+  },
+  "correct": "b",
+  "correctText": "Carga puntual y carga continua",
+  "note": null
+ },
+ {
+  "id": 95,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "4.4. Esfuerzo cortante",
+  "question": "El esfuerzo cortante en una sección de una viga se define como:",
+  "options": {
+   "a": "El producto de todas las fuerzas que actúan sobre la viga",
+   "b": "La suma algebraica de todas las fuerzas externas perpendiculares al eje de la viga que actúan a un lado de la sección considerada",
+   "c": "Solo la fuerza en el extremo derecho de la viga",
+   "d": "La media de las cargas aplicadas"
+  },
+  "correct": "b",
+  "correctText": "La suma algebraica de todas las fuerzas externas perpendiculares al eje de la viga que actúan a un lado de la sección considerada",
+  "note": null
+ },
+ {
+  "id": 96,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "4.4. Esfuerzo cortante",
+  "question": "La fuerza cortante se considera positiva cuando:",
+  "options": {
+   "a": "La parte izquierda tiende a subir respecto a la parte derecha",
+   "b": "La parte derecha tiende a subir respecto a la parte izquierda",
+   "c": "No hay desplazamiento relativo",
+   "d": "El momento flector es nulo"
+  },
+  "correct": "a",
+  "correctText": "La parte izquierda tiende a subir respecto a la parte derecha",
+  "note": null
+ },
+ {
+  "id": 97,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "5. Torsión",
+  "question": "El efecto de torsión se presenta cuando la recta de acción de la carga, contenida en el plano de la sección, no pasa por:",
+  "options": {
+   "a": "El extremo de la viga",
+   "b": "El centro de gravedad de la sección (G)",
+   "c": "El apoyo más cercano",
+   "d": "El eje longitudinal de la viga"
+  },
+  "correct": "b",
+  "correctText": "El centro de gravedad de la sección (G)",
+  "note": null
+ },
+ {
+  "id": 98,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "5. Torsión",
+  "question": "El momento que actúa en el plano de la sección debido a la torsión se denomina:",
+  "options": {
+   "a": "Momento flector",
+   "b": "Momento torsor (Mt)",
+   "c": "Esfuerzo cortante",
+   "d": "Momento resistente"
+  },
+  "correct": "b",
+  "correctText": "Momento torsor (Mt)",
+  "note": null
+ },
+ {
+  "id": 99,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "5. Torsión",
+  "question": "Un elemento dúctil, antes de romperse:",
+  "options": {
+   "a": "Rompe bruscamente sin avisar",
+   "b": "Sufre grandes deformaciones y avisa con fisuras antes de romperse",
+   "c": "No se deforma en absoluto",
+   "d": "Aumenta su rigidez de forma instantánea"
+  },
+  "correct": "b",
+  "correctText": "Sufre grandes deformaciones y avisa con fisuras antes de romperse",
+  "note": null
+ },
+ {
+  "id": 100,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "5. Torsión",
+  "question": "Un elemento frágil, en comparación con uno dúctil:",
+  "options": {
+   "a": "Rompe bruscamente, sin previo aviso",
+   "b": "Se deforma mucho antes de romper",
+   "c": "Nunca rompe",
+   "d": "Tiene mayor ductilidad"
+  },
+  "correct": "a",
+  "correctText": "Rompe bruscamente, sin previo aviso",
+  "note": null
+ },
+ {
+  "id": 101,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "5.1. Ángulo de torsión",
+  "question": "Al ángulo girado por unidad de longitud en una barra torsionada se le denomina:",
+  "options": {
+   "a": "Ángulo específico de torsión",
+   "b": "Ángulo de Poisson",
+   "c": "Coeficiente de seguridad",
+   "d": "Radio de giro"
+  },
+  "correct": "a",
+  "correctText": "Ángulo específico de torsión",
+  "note": null
+ },
+ {
+  "id": 102,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "5.2. Módulo de torsión",
+  "question": "El módulo de torsión (o inercia torsional) se designa habitualmente por la letra:",
+  "options": {
+   "a": "W",
+   "b": "J",
+   "c": "K",
+   "d": "G"
+  },
+  "correct": "b",
+  "correctText": "J",
+  "note": null
+ },
+ {
+  "id": 103,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "6. Tensiones",
+  "question": "La tensión se define como:",
+  "options": {
+   "a": "El producto de la carga por la sección del material",
+   "b": "La relación de la carga con la sección del material",
+   "c": "La masa dividida por el tiempo",
+   "d": "La velocidad de deformación"
+  },
+  "correct": "b",
+  "correctText": "La relación de la carga con la sección del material",
+  "note": null
+ },
+ {
+  "id": 104,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "6. Tensiones",
+  "question": "La unidad más frecuente de tensión es:",
+  "options": {
+   "a": "N/mm² (MPa) y kg/cm²",
+   "b": "kg/m³",
+   "c": "m/s²",
+   "d": "Pa·s"
+  },
+  "correct": "a",
+  "correctText": "N/mm² (MPa) y kg/cm²",
+  "note": null
+ },
+ {
+  "id": 105,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "6. Tensiones",
+  "question": "Las distribuciones de tensión, aunque pueden ser complejas, consisten como máximo en tres estados básicos de tensión, que son:",
+  "options": {
+   "a": "Tracción, compresión y corte",
+   "b": "Torsión, flexión y pandeo",
+   "c": "Dilatación, contracción y rotura",
+   "d": "Elasticidad, plasticidad y fluencia"
+  },
+  "correct": "a",
+  "correctText": "Tracción, compresión y corte",
+  "note": null
+ },
+ {
+  "id": 106,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "6.1. Tensión de rotura",
+  "question": "La tensión de rotura se define como:",
+  "options": {
+   "a": "La tensión mínima que soporta un material",
+   "b": "La máxima tensión que un material puede soportar al ser traccionado antes de producirse el \"necking\" (estricción)",
+   "c": "La tensión admisible",
+   "d": "El coeficiente de Poisson"
+  },
+  "correct": "b",
+  "correctText": "La máxima tensión que un material puede soportar al ser traccionado antes de producirse el \"necking\" (estricción)",
+  "note": null
+ },
+ {
+  "id": 107,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "6.1. Tensión de rotura",
+  "question": "La tensión de rotura es una propiedad:",
+  "options": {
+   "a": "Extensiva, dependiente del tamaño de la probeta",
+   "b": "Intensiva, que no depende del tamaño del objeto de ensayo",
+   "c": "Variable solo con la temperatura ambiente",
+   "d": "Igual siempre al límite elástico"
+  },
+  "correct": "b",
+  "correctText": "Intensiva, que no depende del tamaño del objeto de ensayo",
+  "note": null
+ },
+ {
+  "id": 108,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "6.1. Tensión de rotura",
+  "question": "¿Cuáles son los tres modos diferentes de rotura descritos en el manual?",
+  "options": {
+   "a": "De apertura, deslizante y transversal",
+   "b": "Lineal, superficial y volumétrica",
+   "c": "Elástica, plástica y dúctil",
+   "d": "Axial, radial y tangencial"
+  },
+  "correct": "a",
+  "correctText": "De apertura, deslizante y transversal",
+  "note": null
+ },
+ {
+  "id": 109,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "6.2. Tensión de trabajo",
+  "question": "La tensión de trabajo (o tensión admisible) se elige habitualmente:",
+  "options": {
+   "a": "Igual al límite de proporcionalidad",
+   "b": "Bastante inferior al límite de proporcionalidad",
+   "c": "Superior a la tensión de rotura",
+   "d": "Sin relación con el límite elástico"
+  },
+  "correct": "b",
+  "correctText": "Bastante inferior al límite de proporcionalidad",
+  "note": null
+ },
+ {
+  "id": 110,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "7. Coeficiente de seguridad (apartado adicional sobre edificación)",
+  "question": "Un coeficiente de seguridad en estructuras es un valor numérico que:",
+  "options": {
+   "a": "Solo disminuye las resistencias de los materiales",
+   "b": "Modifica aumentando o disminuyendo los datos iniciales (aumenta las acciones y disminuye las resistencias)",
+   "c": "Es siempre igual a 1",
+   "d": "Se aplica únicamente a estructuras de hormigón"
+  },
+  "correct": "b",
+  "correctText": "Modifica aumentando o disminuyendo los datos iniciales (aumenta las acciones y disminuye las resistencias)",
+  "note": null
+ },
+ {
+  "id": 111,
+  "unit": "2",
+  "unitName": "Esfuerzos que soportan las estructuras metálicas",
+  "section": "7. Coeficiente de seguridad (apartado adicional sobre edificación)",
+  "question": "A mayor control de obra:",
+  "options": {
+   "a": "Mayor es el coeficiente de seguridad a aplicar",
+   "b": "Menor es el coeficiente de seguridad a aplicar",
+   "c": "No varía el coeficiente de seguridad",
+   "d": "Se elimina la necesidad de coeficiente de seguridad"
+  },
+  "correct": "b",
+  "correctText": "Menor es el coeficiente de seguridad a aplicar",
+  "note": null
+ },
+ {
+  "id": 112,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1. Vigas",
+  "question": "Una viga es un elemento estructural que se coloca:",
+  "options": {
+   "a": "Verticalmente y transmite cargas axiales",
+   "b": "Horizontalmente y sirve de soporte de cargas de otros elementos estructurales",
+   "c": "Solo en estructuras de celosía",
+   "d": "Únicamente como elemento decorativo"
+  },
+  "correct": "b",
+  "correctText": "Horizontalmente y sirve de soporte de cargas de otros elementos estructurales",
+  "note": null
+ },
+ {
+  "id": 113,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.1. Tipos de vigas",
+  "question": "La viga empotrada en un extremo y libre en el otro se denomina:",
+  "options": {
+   "a": "Viga continua",
+   "b": "Viga en voladizo",
+   "c": "Viga de cimentación",
+   "d": "Viga de celosía"
+  },
+  "correct": "b",
+  "correctText": "Viga en voladizo",
+  "note": null
+ },
+ {
+  "id": 114,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.1. Tipos de vigas",
+  "question": "La viga de acero compuesta por diferentes planchas unidas por remaches o soldadas entre sí también se denomina:",
+  "options": {
+   "a": "Viga maestra",
+   "b": "Viga ensamblada o viga de alma llena",
+   "c": "Viga de caballete",
+   "d": "Viga jabalconada"
+  },
+  "correct": "b",
+  "correctText": "Viga ensamblada o viga de alma llena",
+  "note": null
+ },
+ {
+  "id": 115,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.1. Tipos de vigas",
+  "question": "La viga Vierendeel se caracteriza por:",
+  "options": {
+   "a": "No tener alma",
+   "b": "Estar formada por cordones horizontales y barras verticales rígidas, sin barras diagonales",
+   "c": "Usarse solo en madera",
+   "d": "Ser siempre de sección circular"
+  },
+  "correct": "b",
+  "correctText": "Estar formada por cordones horizontales y barras verticales rígidas, sin barras diagonales",
+  "note": null
+ },
+ {
+  "id": 116,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.1. Tipos de vigas",
+  "question": "Las jácenas de canto se caracterizan por presentar:",
+  "options": {
+   "a": "Un momento de inercia muy pequeño",
+   "b": "Un gran momento de inercia",
+   "c": "Ausencia de fibra neutra",
+   "d": "Sección siempre circular"
+  },
+  "correct": "b",
+  "correctText": "Un gran momento de inercia",
+  "note": null
+ },
+ {
+  "id": 117,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.2. Cargas de las vigas",
+  "question": "Las cargas que no varían con el paso del tiempo (como el peso propio) se denominan:",
+  "options": {
+   "a": "Cargas variables",
+   "b": "Cargas fijas",
+   "c": "Cargas puntuales",
+   "d": "Cargas accidentales"
+  },
+  "correct": "b",
+  "correctText": "Cargas fijas",
+  "note": null
+ },
+ {
+  "id": 118,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.2. Cargas de las vigas",
+  "question": "¿Cuáles son los parámetros a tener en cuenta en la aplicación de una carga sobre una viga?",
+  "options": {
+   "a": "Intensidad, dirección y punto de aplicación",
+   "b": "Solo la intensidad",
+   "c": "Solo el punto de aplicación",
+   "d": "Color, forma y textura del material"
+  },
+  "correct": "a",
+  "correctText": "Intensidad, dirección y punto de aplicación",
+  "note": null
+ },
+ {
+  "id": 119,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.3. Cálculo analítico de vigas",
+  "question": "Según el CTE DB SE-AE, las acciones térmicas pueden no considerarse cuando:",
+  "options": {
+   "a": "Se dispongan juntas de dilatación o no existan elementos continuos de más de 40 m de longitud",
+   "b": "La estructura sea de hormigón armado",
+   "c": "La temperatura ambiente sea constante",
+   "d": "No se utilicen perfiles metálicos"
+  },
+  "correct": "a",
+  "correctText": "Se dispongan juntas de dilatación o no existan elementos continuos de más de 40 m de longitud",
+  "note": null
+ },
+ {
+  "id": 120,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.3. Cálculo analítico de vigas",
+  "question": "¿Cuáles son las hipótesis de cálculo del CTE mencionadas en el manual?",
+  "options": {
+   "a": "H.1 Cargas permanentes; H.2 Sobrecarga de uso; H.3 Sobrecarga de nieve; H.4 Viento",
+   "b": "Solo cargas permanentes",
+   "c": "Solo viento y nieve",
+   "d": "Cargas térmicas y reológicas"
+  },
+  "correct": "a",
+  "correctText": "H.1 Cargas permanentes; H.2 Sobrecarga de uso; H.3 Sobrecarga de nieve; H.4 Viento",
+  "note": null
+ },
+ {
+  "id": 121,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.3. Cálculo analítico de vigas",
+  "question": "La condición de estabilidad estructural se cumple cuando:",
+  "options": {
+   "a": "Ed,dst ≥ Ed,stb",
+   "b": "Ed,dst < Ed,stb (el efecto de las acciones estabilizadoras es mayor o igual que el de las desestabilizadoras)",
+   "c": "No existen acciones variables",
+   "d": "Las acciones permanentes son nulas"
+  },
+  "correct": "b",
+  "correctText": "Ed,dst < Ed,stb",
+  "note": null
+ },
+ {
+  "id": 122,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.3.1. Estado límite",
+  "question": "Los estados límite que debe cumplir una estructura son:",
+  "options": {
+   "a": "Estados límite últimos y estados límite de servicio",
+   "b": "Solo estados de rotura",
+   "c": "Solo estados de servicio",
+   "d": "Estados de pandeo únicamente"
+  },
+  "correct": "a",
+  "correctText": "Estados límite últimos y estados límite de servicio",
+  "note": null
+ },
+ {
+  "id": 123,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.3.2. Métodos de cálculo y combinación de acciones",
+  "question": "El \"valor frecuente\" del coeficiente de simultaneidad se define como aquel que se supera durante:",
+  "options": {
+   "a": "El 1% del tiempo de referencia",
+   "b": "El 50% del tiempo de referencia",
+   "c": "El 100% del tiempo de referencia",
+   "d": "El 10% del tiempo de referencia"
+  },
+  "correct": "a",
+  "correctText": "El 1% del tiempo de referencia",
+  "note": null
+ },
+ {
+  "id": 124,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.3.2. Métodos de cálculo y combinación de acciones",
+  "question": "El \"valor casi permanente\" del coeficiente de simultaneidad se supera durante:",
+  "options": {
+   "a": "El 1% del tiempo de referencia",
+   "b": "El 50% del tiempo de referencia",
+   "c": "El 99% del tiempo de referencia",
+   "d": "Nunca se supera"
+  },
+  "correct": "b",
+  "correctText": "El 50% del tiempo de referencia",
+  "note": null
+ },
+ {
+  "id": 125,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.4. Vigas armadas de alma llena",
+  "question": "En una viga armada de alma llena, las alas están unidas por una pared llena denominada:",
+  "options": {
+   "a": "Cordón",
+   "b": "Montante",
+   "c": "Alma",
+   "d": "Diagonal"
+  },
+  "correct": "c",
+  "correctText": "Alma",
+  "note": null
+ },
+ {
+  "id": 126,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.4. Vigas armadas de alma llena",
+  "question": "Las vigas con secciones sin eje vertical de simetría, si las cargas no pasan por el centro de esfuerzos cortantes, quedan solicitadas además a:",
+  "options": {
+   "a": "Tracción pura",
+   "b": "Torsión adicional",
+   "c": "Compresión pura",
+   "d": "Dilatación térmica"
+  },
+  "correct": "b",
+  "correctText": "Torsión adicional",
+  "note": null
+ },
+ {
+  "id": 127,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.5.1. Apoyo simple de rodillos",
+  "question": "El apoyo simple de rodillo permite:",
+  "options": {
+   "a": "El desplazamiento longitudinal y el giro de la viga, impidiendo el desplazamiento transversal",
+   "b": "Impedir todo movimiento y giro",
+   "c": "Solo el giro, sin ningún desplazamiento",
+   "d": "El desplazamiento en todas direcciones"
+  },
+  "correct": "a",
+  "correctText": "El desplazamiento longitudinal y el giro de la viga, impidiendo el desplazamiento transversal",
+  "note": null
+ },
+ {
+  "id": 128,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.5.2. Apoyo fijo o pasador",
+  "question": "El apoyo fijo o pasador permite el giro de la viga pero impide:",
+  "options": {
+   "a": "Solo el desplazamiento longitudinal",
+   "b": "El desplazamiento en cualquier dirección",
+   "c": "Solo el desplazamiento transversal",
+   "d": "Ningún movimiento, incluido el giro"
+  },
+  "correct": "b",
+  "correctText": "El desplazamiento en cualquier dirección",
+  "note": null
+ },
+ {
+  "id": 129,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.5.3. Empotramiento",
+  "question": "El empotramiento impide:",
+  "options": {
+   "a": "Solo el giro",
+   "b": "El desplazamiento a lo largo de los ejes y el giro de la viga",
+   "c": "Solo el desplazamiento vertical",
+   "d": "Nada, es un apoyo libre"
+  },
+  "correct": "b",
+  "correctText": "El desplazamiento a lo largo de los ejes y el giro de la viga",
+  "note": null
+ },
+ {
+  "id": 130,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.6. Vigas de celosía",
+  "question": "La condición fundamental que debe cumplir una estructura de celosía es ser:",
+  "options": {
+   "a": "Flexible",
+   "b": "Geométricamente indeformable",
+   "c": "De gran peso",
+   "d": "De sección circular"
+  },
+  "correct": "b",
+  "correctText": "Geométricamente indeformable",
+  "note": null
+ },
+ {
+  "id": 131,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.6. Vigas de celosía",
+  "question": "El elemento fundamental de una celosía indeformable es:",
+  "options": {
+   "a": "El cuadrado",
+   "b": "El triángulo",
+   "c": "El círculo",
+   "d": "El rectángulo"
+  },
+  "correct": "b",
+  "correctText": "El triángulo",
+  "note": null
+ },
+ {
+  "id": 132,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.6. Vigas de celosía",
+  "question": "En las vigas en celosía, el conjunto de elementos que forman la cabeza superior se denomina:",
+  "options": {
+   "a": "Cordón inferior",
+   "b": "Montante",
+   "c": "Cordón superior (o \"par\" en las cerchas)",
+   "d": "Diagonal"
+  },
+  "correct": "c",
+  "correctText": "Cordón superior (o \"par\" en las cerchas)",
+  "note": null
+ },
+ {
+  "id": 133,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.6. Vigas de celosía",
+  "question": "En las cerchas, el cordón inferior se denomina habitualmente:",
+  "options": {
+   "a": "Par",
+   "b": "Tirante (por trabajar usualmente a tracción)",
+   "c": "Montante",
+   "d": "Diagonal"
+  },
+  "correct": "b",
+  "correctText": "Tirante (por trabajar usualmente a tracción)",
+  "note": null
+ },
+ {
+  "id": 134,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.6. Vigas de celosía",
+  "question": "Las barras verticales dispuestas en el alma de una viga de celosía se llaman:",
+  "options": {
+   "a": "Diagonales",
+   "b": "Montantes",
+   "c": "Cordones",
+   "d": "Presillas"
+  },
+  "correct": "b",
+  "correctText": "Montantes",
+  "note": null
+ },
+ {
+  "id": 135,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.6.1. Principios básicos de cálculo de celosías indeformables",
+  "question": "Según los principios simplificatorios del cálculo de celosías, las cargas deben:",
+  "options": {
+   "a": "Estar aplicadas fuera del plano de la viga",
+   "b": "Estar aplicadas en los nudos y contenidas en el plano de la viga",
+   "c": "Aplicarse únicamente en los extremos",
+   "d": "Repartirse uniformemente sobre las barras, nunca en los nudos"
+  },
+  "correct": "b",
+  "correctText": "Estar aplicadas en los nudos y contenidas en el plano de la viga",
+  "note": null
+ },
+ {
+  "id": 136,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.6.1. Principios básicos de cálculo de celosías indeformables",
+  "question": "El método de cálculo de celosías mencionado en el manual, que requiere que las cargas estén aplicadas en los nudos, es el método de:",
+  "options": {
+   "a": "Cremona",
+   "b": "Steiner",
+   "c": "Pascal",
+   "d": "Poisson"
+  },
+  "correct": "a",
+  "correctText": "Cremona",
+  "note": null
+ },
+ {
+  "id": 137,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.6.1. Principios básicos de cálculo de celosías indeformables",
+  "question": "En la práctica, los nudos de una celosía, aunque se calculan como articulados, realmente se construyen como nudos:",
+  "options": {
+   "a": "Totalmente libres",
+   "b": "Rígidos o parcialmente rígidos (por soldadura u otros medios de unión)",
+   "c": "Inexistentes",
+   "d": "Solo atornillados sin soldadura"
+  },
+  "correct": "b",
+  "correctText": "Rígidos o parcialmente rígidos (por soldadura u otros medios de unión)",
+  "note": null
+ },
+ {
+  "id": 138,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "1.6.1. Principios básicos de cálculo de celosías indeformables",
+  "question": "Los momentos secundarios que aparecen en las barras de una celosía por la rigidez de los nudos, en vigas normales, no suelen superar:",
+  "options": {
+   "a": "El 50% de la tensión principal",
+   "b": "El 10% de la tensión principal",
+   "c": "El 100% de la tensión principal",
+   "d": "El 1% de la tensión principal"
+  },
+  "correct": "b",
+  "correctText": "El 10% de la tensión principal",
+  "note": null
+ },
+ {
+  "id": 139,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2. Soportes",
+  "question": "Los soportes verticales o apoyos trabajan principalmente a:",
+  "options": {
+   "a": "Tracción",
+   "b": "Compresión",
+   "c": "Torsión pura",
+   "d": "Cortadura pura"
+  },
+  "correct": "b",
+  "correctText": "Compresión",
+  "note": null
+ },
+ {
+  "id": 140,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2. Soportes",
+  "question": "Las dos ecuaciones generales del equilibrio para fuerzas estáticas son:",
+  "options": {
+   "a": "ΣF = 0 y ΣM = 0",
+   "b": "F = m·a",
+   "c": "E = m·c²",
+   "d": "σ = F/A"
+  },
+  "correct": "a",
+  "correctText": "ΣF = 0 y ΣM = 0",
+  "note": null
+ },
+ {
+  "id": 141,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.1. Tipos de soportes",
+  "question": "Los apoyos que restringen un solo grado de libertad (los más simples) son, entre otros:",
+  "options": {
+   "a": "Empotramientos",
+   "b": "Rodillos, superficies lisas, uniones con cables",
+   "c": "Articulaciones rugosas",
+   "d": "Rótulas tridimensionales"
+  },
+  "correct": "b",
+  "correctText": "Rodillos, superficies lisas, uniones con cables",
+  "note": null
+ },
+ {
+  "id": 142,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.1. Tipos de soportes",
+  "question": "Los apoyos que restringen dos grados de libertad incluyen:",
+  "options": {
+   "a": "Los empotramientos",
+   "b": "Las articulaciones, superficies rugosas y rótulas",
+   "c": "Solo los rodillos",
+   "d": "Las presillas"
+  },
+  "correct": "b",
+  "correctText": "Las articulaciones, superficies rugosas y rótulas",
+  "note": null
+ },
+ {
+  "id": 143,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.1.1. Apoyo articulado móvil",
+  "question": "El apoyo articulado móvil libera el movimiento de la sección del vínculo:",
+  "options": {
+   "a": "En el eje X y en el plano XY",
+   "b": "En todas direcciones sin restricción",
+   "c": "Únicamente en el eje Z",
+   "d": "No libera ningún movimiento"
+  },
+  "correct": "a",
+  "correctText": "En el eje X y en el plano XY",
+  "note": null
+ },
+ {
+  "id": 144,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.1.2. Apoyo articulado fijo",
+  "question": "El apoyo articulado fijo impide el desplazamiento en los ejes X e Y, pero no impide:",
+  "options": {
+   "a": "El giro en el plano que forman ambos ejes",
+   "b": "Ningún movimiento",
+   "c": "Las reacciones Px y Py",
+   "d": "La aplicación de cargas"
+  },
+  "correct": "a",
+  "correctText": "El giro en el plano que forman ambos ejes",
+  "note": null
+ },
+ {
+  "id": 145,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.1.3. Apoyo empotrado",
+  "question": "El apoyo empotrado presenta tres incógnitas a resolver, que son:",
+  "options": {
+   "a": "Px, Py y el momento Mz",
+   "b": "Solo Px",
+   "c": "Solo el momento Mz",
+   "d": "Px, Py y la masa"
+  },
+  "correct": "a",
+  "correctText": "Px, Py y el momento Mz",
+  "note": null
+ },
+ {
+  "id": 146,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.2. Disposición de los perfiles en los soportes",
+  "question": "Para la correcta colocación de perfiles metálicos en pilares, es indispensable conocer:",
+  "options": {
+   "a": "En cuál de los dos sentidos tiene más inercia, para disminuir los posibles pandeos",
+   "b": "Solo el peso del perfil",
+   "c": "El color del acabado",
+   "d": "La longitud total del perfil"
+  },
+  "correct": "a",
+  "correctText": "En cuál de los dos sentidos tiene más inercia, para disminuir los posibles pandeos",
+  "note": null
+ },
+ {
+  "id": 147,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.1. Roblonado",
+  "question": "Cuando se forma la segunda cabeza de un remache, este se transforma en:",
+  "options": {
+   "a": "Un tornillo",
+   "b": "Un roblón",
+   "c": "Una arandela",
+   "d": "Un cáncamo"
+  },
+  "correct": "b",
+  "correctText": "Un roblón",
+  "note": null
+ },
+ {
+  "id": 148,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.1. Roblonado",
+  "question": "Los agujeros para el roblonado deben tener un diámetro:",
+  "options": {
+   "a": "Igual al diámetro nominal del remache",
+   "b": "1 mm mayor que el diámetro nominal del remache",
+   "c": "El doble del diámetro nominal",
+   "d": "La mitad del diámetro nominal"
+  },
+  "correct": "b",
+  "correctText": "1 mm mayor que el diámetro nominal del remache",
+  "note": null
+ },
+ {
+  "id": 149,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.1. Roblonado",
+  "question": "Los agujeros en las piezas para roblonado deben hacerse mediante:",
+  "options": {
+   "a": "Punzonado siempre",
+   "b": "Taladrado, y no por punzonado (salvo en chapas finas de hasta 10 mm)",
+   "c": "Fusión",
+   "d": "Estampación en frío"
+  },
+  "correct": "b",
+  "correctText": "Taladrado, y no por punzonado (salvo en chapas finas de hasta 10 mm)",
+  "note": null
+ },
+ {
+  "id": 150,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.1. Roblonado",
+  "question": "Los roblones constituyen medios de unión que están solicitados por:",
+  "options": {
+   "a": "Tracción pura",
+   "b": "Cortadura (esfuerzo cortante) y aplastamiento",
+   "c": "Flexión pura",
+   "d": "Torsión pura"
+  },
+  "correct": "b",
+  "correctText": "Cortadura (esfuerzo cortante) y aplastamiento",
+  "note": null
+ },
+ {
+  "id": 151,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.2. Atornillado",
+  "question": "Se distinguen tres clases de tornillos para uniones metálicas:",
+  "options": {
+   "a": "Ordinarios (negros), calibrados (ajustados) y de alta resistencia",
+   "b": "Solo ordinarios y de alta resistencia",
+   "c": "Solo calibrados",
+   "d": "De madera, de acero y de aluminio"
+  },
+  "correct": "a",
+  "correctText": "Ordinarios (negros), calibrados (ajustados) y de alta resistencia",
+  "note": null
+ },
+ {
+  "id": 152,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.2. Atornillado",
+  "question": "El uso de arandelas en uniones atornilladas es obligatorio para:",
+  "options": {
+   "a": "Decorar la unión",
+   "b": "Evitar que la rosca o su terminal penetren en el agujero y produzcan tensiones adicionales",
+   "c": "Reducir el peso de la unión",
+   "d": "Aumentar la conductividad eléctrica"
+  },
+  "correct": "b",
+  "correctText": "Evitar que la rosca o su terminal penetren en el agujero y produzcan tensiones adicionales",
+  "note": null
+ },
+ {
+  "id": 153,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.3. Tornillos de alta resistencia",
+  "question": "Los tornillos de alta resistencia (AR) se aprietan fuertemente para:",
+  "options": {
+   "a": "Producir cortadura inmediata",
+   "b": "Engendrar una gran reacción de rozamiento entre las superficies en contacto y transmitir los esfuerzos por rozamiento",
+   "c": "Reducir el peso de la unión",
+   "d": "Evitar el uso de arandelas"
+  },
+  "correct": "b",
+  "correctText": "Engendrar una gran reacción de rozamiento entre las superficies en contacto y transmitir los esfuerzos por rozamiento",
+  "note": null
+ },
+ {
+  "id": 154,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.3. Tornillos de alta resistencia",
+  "question": "En los tornillos de alta resistencia, el vástago queda solicitado por:",
+  "options": {
+   "a": "Solo cortadura",
+   "b": "Tracción axil y torsión, como consecuencia del momento de apretadura",
+   "c": "Solo flexión",
+   "d": "Ninguna solicitación"
+  },
+  "correct": "b",
+  "correctText": "Tracción axil y torsión, como consecuencia del momento de apretadura",
+  "note": null
+ },
+ {
+  "id": 155,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.4. Soldadura",
+  "question": "El procedimiento de soldadura más antiguo conocido es:",
+  "options": {
+   "a": "La soldadura por arco eléctrico",
+   "b": "La soldadura por forja",
+   "c": "La soldadura por resistencia",
+   "d": "La soldadura TIG"
+  },
+  "correct": "b",
+  "correctText": "La soldadura por forja",
+  "note": null
+ },
+ {
+  "id": 156,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.4. Soldadura",
+  "question": "¿Quién descubrió el arco eléctrico, en la primera parte del siglo XIX?",
+  "options": {
+   "a": "Isaac Newton",
+   "b": "Sir Humphrey Davy",
+   "c": "Oscar Kjellberg",
+   "d": "De Meritens"
+  },
+  "correct": "b",
+  "correctText": "Sir Humphrey Davy",
+  "note": null
+ },
+ {
+  "id": 157,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.4. Soldadura",
+  "question": "¿Quién inventó el electrodo revestido, en Suecia, en 1910?",
+  "options": {
+   "a": "Slavianoff",
+   "b": "Oscar Kjellberg",
+   "c": "Bernardos",
+   "d": "De Meritens"
+  },
+  "correct": "b",
+  "correctText": "Oscar Kjellberg",
+  "note": null
+ },
+ {
+  "id": 158,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.3.4. Soldadura",
+  "question": "En una unión soldada, al hacer un examen radiográfico se distinguen claramente:",
+  "options": {
+   "a": "Solo el metal de aportación",
+   "b": "La zona del metal fundido, la zona de transición y la zona del metal de base",
+   "c": "Solo dos zonas",
+   "d": "Cuatro zonas diferenciadas"
+  },
+  "correct": "b",
+  "correctText": "La zona del metal fundido, la zona de transición y la zona del metal de base",
+  "note": null
+ },
+ {
+  "id": 159,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.4. Clasificación de uniones metálicas",
+  "question": "Las uniones cuya capacidad de carga es igual o superior a la del elemento más débil se denominan:",
+  "options": {
+   "a": "Uniones de resistencia parcial",
+   "b": "Uniones de resistencia total",
+   "c": "Uniones articuladas",
+   "d": "Uniones semirrígidas"
+  },
+  "correct": "b",
+  "correctText": "Uniones de resistencia total",
+  "note": null
+ },
+ {
+  "id": 160,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.4. Clasificación de uniones metálicas",
+  "question": "Las uniones que mantienen los ángulos entre las piezas enlazadas, donde el giro del nudo es igual al de las barras unidas, se denominan:",
+  "options": {
+   "a": "Simples",
+   "b": "Semirrígidas",
+   "c": "Rígidas",
+   "d": "Articuladas puras"
+  },
+  "correct": "c",
+  "correctText": "Rígidas",
+  "note": null
+ },
+ {
+  "id": 161,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.4. Clasificación de uniones metálicas",
+  "question": "Las uniones flexibles en las que se produce un giro relativo entre las barras enlazadas en el nudo, pero existiendo transmisión de momentos, se denominan:",
+  "options": {
+   "a": "Rígidas",
+   "b": "Semirrígidas",
+   "c": "Simples",
+   "d": "De resistencia total"
+  },
+  "correct": "b",
+  "correctText": "Semirrígidas",
+  "note": null
+ },
+ {
+  "id": 162,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.4.1. Unión viga-soporte",
+  "question": "Según el Código Técnico de la Edificación, en función de su rigidez, las uniones se clasifican en:",
+  "options": {
+   "a": "Nominalmente articuladas, rígidas y semirrígidas",
+   "b": "Solo rígidas",
+   "c": "Solo articuladas",
+   "d": "De resistencia total y parcial únicamente"
+  },
+  "correct": "a",
+  "correctText": "Nominalmente articuladas, rígidas y semirrígidas",
+  "note": null
+ },
+ {
+  "id": 163,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.4.2. Unión viga-soporte soldadas articuladas",
+  "question": "En una unión viga-soporte soldada articulada, se recomienda que la longitud del cordón de soldadura del alma esté comprendida entre:",
+  "options": {
+   "a": "La mitad y dos tercios de la altura útil del alma",
+   "b": "El doble de la altura del alma",
+   "c": "Un tercio y la mitad de la altura del ala",
+   "d": "Toda la longitud de la viga"
+  },
+  "correct": "a",
+  "correctText": "La mitad y dos tercios de la altura útil del alma",
+  "note": null
+ },
+ {
+  "id": 164,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.4.3. Unión viga-soporte atornilladas articuladas",
+  "question": "La unión viga-soporte atornillada articulada es posiblemente la más aconsejable cuando:",
+  "options": {
+   "a": "La unión se realiza en taller",
+   "b": "La unión se tiene que realizar en obra",
+   "c": "Se requiere máxima rigidez",
+   "d": "No se dispone de tornillos"
+  },
+  "correct": "b",
+  "correctText": "La unión se tiene que realizar en obra",
+  "note": null
+ },
+ {
+  "id": 165,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.4.4. Unión viga-soporte sobre casquillos",
+  "question": "En las uniones sobre casquillos, con ángulos de reducido espesor, la parte superior de la unión tiende a fallar por:",
+  "options": {
+   "a": "Cortadura pura",
+   "b": "Flexión",
+   "c": "Torsión",
+   "d": "Tracción pura"
+  },
+  "correct": "b",
+  "correctText": "Flexión",
+  "note": null
+ },
+ {
+  "id": 166,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.4.5. Unión rígida viga-soporte soldada",
+  "question": "En las uniones rígidas viga-soporte soldadas, para transmitir adecuadamente las fuerzas de compresión y tracción de las cabezas de la viga al pilar, se disponen:",
+  "options": {
+   "a": "Rigidizadores",
+   "b": "Solo arandelas",
+   "c": "Cáncamos",
+   "d": "Presillas"
+  },
+  "correct": "a",
+  "correctText": "Rigidizadores",
+  "note": null
+ },
+ {
+  "id": 167,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.4.6. Unión rígida viga-soporte atornillada",
+  "question": "Las uniones rígidas viga-soporte atornilladas se emplean principalmente para:",
+  "options": {
+   "a": "Realizar las uniones en taller",
+   "b": "Realizar las uniones en obra",
+   "c": "Sustituir siempre a la soldadura",
+   "d": "Evitar el uso de cualquier rigidizador"
+  },
+  "correct": "b",
+  "correctText": "Realizar las uniones en obra",
+  "note": null
+ },
+ {
+  "id": 168,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.4.7. Unión resistente a compresión",
+  "question": "Para que se admita la transmisión de esfuerzos por contacto en elementos comprimidos, el Código Técnico exige que las superficies:",
+  "options": {
+   "a": "Estén pintadas",
+   "b": "Sean suficientemente planas y se evite toda posibilidad de desplazamiento",
+   "c": "Tengan rugosidad alta",
+   "d": "Estén siempre soldadas"
+  },
+  "correct": "b",
+  "correctText": "Sean suficientemente planas y se evite toda posibilidad de desplazamiento",
+  "note": null
+ },
+ {
+  "id": 169,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.5. Cálculo y disposición de presillas",
+  "question": "Los soportes compuestos con presillas, debido a la deformación por cortante, son:",
+  "options": {
+   "a": "Más rígidos que los pilares sólidos de igual inercia",
+   "b": "Más flexibles que los pilares sólidos con la misma inercia",
+   "c": "Idénticos en comportamiento a los pilares sólidos",
+   "d": "Inadecuados para cualquier estructura"
+  },
+  "correct": "b",
+  "correctText": "Más flexibles que los pilares sólidos con la misma inercia",
+  "note": null
+ },
+ {
+  "id": 170,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.5. Cálculo y disposición de presillas",
+  "question": "En los pilares compuestos empresillados, los perfiles en U o en I se utilizan principalmente como:",
+  "options": {
+   "a": "Presillas",
+   "b": "Cordones",
+   "c": "Rigidizadores",
+   "d": "Anclajes"
+  },
+  "correct": "b",
+  "correctText": "Cordones",
+  "note": null
+ },
+ {
+  "id": 171,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.6. Bases de soportes",
+  "question": "La placa de reparto en la base de un soporte tiene como función:",
+  "options": {
+   "a": "Aumentar la presión sobre el hormigón",
+   "b": "Disminuir las presiones sobre el hormigón, material de menor tensión admisible",
+   "c": "Sustituir a los anclajes",
+   "d": "Evitar el uso de armaduras"
+  },
+  "correct": "b",
+  "correctText": "Disminuir las presiones sobre el hormigón, material de menor tensión admisible",
+  "note": null
+ },
+ {
+  "id": 172,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.6.1. Predimensionado de la placa de anclaje y obtención del área portante",
+  "question": "El espesor recomendado para la placa de anclaje en casos de flexocompresión suele estar entre:",
+  "options": {
+   "a": "5 y 10 mm",
+   "b": "15 y 20 mm",
+   "c": "50 y 60 mm",
+   "d": "1 y 3 mm"
+  },
+  "correct": "b",
+  "correctText": "15 y 20 mm",
+  "note": null
+ },
+ {
+  "id": 173,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.6.1. Predimensionado de la placa de anclaje y obtención del área portante",
+  "question": "El área portante de la placa de anclaje es:",
+  "options": {
+   "a": "Toda la superficie de la placa",
+   "b": "La zona alrededor del perfil cuya anchura suplementaria de apoyo tiene el valor C",
+   "c": "Solo el área de las armaduras",
+   "d": "El área total del soporte metálico"
+  },
+  "correct": "b",
+  "correctText": "La zona alrededor del perfil cuya anchura suplementaria de apoyo tiene el valor C",
+  "note": null
+ },
+ {
+  "id": 174,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.6.2. Comprobación de la placa diseñada solicitada a flexocompresión y dimensionado de los anclajes",
+  "question": "La excentricidad en flexocompresión se entiende como:",
+  "options": {
+   "a": "La distancia entre dos pilares",
+   "b": "El cociente entre el máximo momento flector y el máximo axil de la combinación considerada",
+   "c": "El espesor de la placa",
+   "d": "El área portante"
+  },
+  "correct": "b",
+  "correctText": "El cociente entre el máximo momento flector y el máximo axil de la combinación considerada",
+  "note": null
+ },
+ {
+  "id": 175,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.6.3. Comprobación de los elementos de la placa cuando el soporte está solicitado a compresión simple",
+  "question": "Cuando el soporte está solicitado a compresión simple, se deben comprobar:",
+  "options": {
+   "a": "Las dimensiones en planta, el espesor de la chapa y el dimensionado de las armaduras",
+   "b": "Solo el peso propio",
+   "c": "Solo el espesor de la chapa",
+   "d": "Únicamente la resistencia al fuego"
+  },
+  "correct": "a",
+  "correctText": "Las dimensiones en planta, el espesor de la chapa y el dimensionado de las armaduras",
+  "note": null
+ },
+ {
+  "id": 176,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.6.4. Comprobación de las armaduras cuando el soporte está solicitado a tracción",
+  "question": "Cuando el soporte está solicitado a tracción, la placa de reparto:",
+  "options": {
+   "a": "Cumple su función habitual de repartir compresión",
+   "b": "No tiene ninguna función, ya que el axil tiende a separarla de la cimentación",
+   "c": "Se vuelve más eficaz",
+   "d": "Se elimina del diseño"
+  },
+  "correct": "b",
+  "correctText": "No tiene ninguna función, ya que el axil tiende a separarla de la cimentación",
+  "note": null
+ },
+ {
+  "id": 177,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "2.6.5. Detalle constructivo de la placa de anclaje dimensionada",
+  "question": "El detalle constructivo de la placa de anclaje debe satisfacer las condiciones de:",
+  "options": {
+   "a": "Solo flexocompresión",
+   "b": "Flexocompresión, compresión simple y tracción",
+   "c": "Solo tracción",
+   "d": "Únicamente pandeo"
+  },
+  "correct": "b",
+  "correctText": "Flexocompresión, compresión simple y tracción",
+  "note": null
+ },
+ {
+  "id": 178,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "3. Pórticos simples",
+  "question": "Un pórtico se define como un soporte formado por elementos lineales (barras) que definen un plano virtual, en el que como mínimo uno de los elementos (jácena) está sometido a:",
+  "options": {
+   "a": "Compresión pura",
+   "b": "Flexión",
+   "c": "Torsión pura",
+   "d": "Tracción pura"
+  },
+  "correct": "b",
+  "correctText": "Flexión",
+  "note": null
+ },
+ {
+  "id": 179,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "3.1.1. Pórticos rígidos simples",
+  "question": "Los pórticos rígidos simples se proyectan con uniones viga-pilar rígidas en:",
+  "options": {
+   "a": "Ninguno de sus nudos",
+   "b": "Al menos uno de sus cuatro nudos",
+   "c": "Todos los nudos obligatoriamente",
+   "d": "Solo en el nudo central"
+  },
+  "correct": "b",
+  "correctText": "Al menos uno de sus cuatro nudos",
+  "note": null
+ },
+ {
+  "id": 180,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "3.1.2. Pórticos articulados",
+  "question": "En los pórticos articulados:",
+  "options": {
+   "a": "Todos los nudos son rígidos",
+   "b": "Ningún nudo es rígido y necesitan arriostramientos",
+   "c": "No necesitan ningún tipo de arriostramiento",
+   "d": "Son siempre hiperestáticos"
+  },
+  "correct": "b",
+  "correctText": "Ningún nudo es rígido y necesitan arriostramientos",
+  "note": null
+ },
+ {
+  "id": 181,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "3.1.3. Pórticos isostáticos",
+  "question": "En los pórticos isostáticos:",
+  "options": {
+   "a": "Todas las piezas que lo conforman son necesarias y no puede existir variación de momentos",
+   "b": "Existen piezas superfluas",
+   "c": "Tienen poca libertad de movimiento",
+   "d": "Son siempre articulados en todos los nudos"
+  },
+  "correct": "a",
+  "correctText": "Todas las piezas que lo conforman son necesarias y no puede existir variación de momentos",
+  "note": null
+ },
+ {
+  "id": 182,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "3.1.4. Pórticos hiperestáticos",
+  "question": "En los pórticos hiperestáticos:",
+  "options": {
+   "a": "Todas las piezas son estrictamente necesarias",
+   "b": "No todas las piezas son necesarias, aunque la falta de alguna variaría notablemente el equilibrio; son más rígidos",
+   "c": "No existen piezas superfluas en ningún caso",
+   "d": "Tienen máxima libertad de movimiento"
+  },
+  "correct": "b",
+  "correctText": "No todas las piezas son necesarias, aunque la falta de alguna variaría notablemente el equilibrio; son más rígidos",
+  "note": null
+ },
+ {
+  "id": 183,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "3.2. Cálculo de pórticos",
+  "question": "En la nomenclatura de cargas de pórticos, \"q\" representa:",
+  "options": {
+   "a": "Carga de presión de viento",
+   "b": "Cargas gravitatorias (constantes + nieve)",
+   "c": "Carga de succión de viento",
+   "d": "Carga de viento en cubierta a sotavento"
+  },
+  "correct": "b",
+  "correctText": "Cargas gravitatorias (constantes + nieve)",
+  "note": null
+ },
+ {
+  "id": 184,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "3.2.1. Cálculo de las reacciones en los apoyos",
+  "question": "Para calcular las reacciones en los apoyos de un pórtico se aplican:",
+  "options": {
+   "a": "Las ecuaciones de la estática",
+   "b": "Solo el teorema de Steiner",
+   "c": "El principio de Arquímedes",
+   "d": "El coeficiente de Poisson"
+  },
+  "correct": "a",
+  "correctText": "Las ecuaciones de la estática",
+  "note": null
+ },
+ {
+  "id": 185,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "3.2.2. Cálculo de las leyes de esfuerzos internos para cada barra",
+  "question": "En el análisis de esfuerzos internos de un pórtico, las siglas M, N y T representan respectivamente:",
+  "options": {
+   "a": "Masa, número y temperatura",
+   "b": "Momento flector, esfuerzo axial y esfuerzo cortante",
+   "c": "Módulo, newton y tensión",
+   "d": "Metro, newton y tonelada"
+  },
+  "correct": "b",
+  "correctText": "Momento flector, esfuerzo axial y esfuerzo cortante",
+  "note": null
+ },
+ {
+  "id": 186,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "4. Normas y tablas",
+  "question": "Las tres normas aplicables en España para el cálculo de estructuras metálicas son:",
+  "options": {
+   "a": "EN 1993 (Eurocódigo), CTE-DB-SE-A y EAE-2011",
+   "b": "Solo el Eurocódigo",
+   "c": "ISO 9001, ISO 14001 y CTE",
+   "d": "ASME, API y CTE"
+  },
+  "correct": "a",
+  "correctText": "EN 1993 (Eurocódigo), CTE-DB-SE-A y EAE-2011",
+  "note": null
+ },
+ {
+  "id": 187,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "4.1. La EN 1993",
+  "question": "La EN 1993 es el Eurocódigo Estructural de acero, publicado por:",
+  "options": {
+   "a": "AENOR",
+   "b": "El CEN (Comité Europeo de Normalización)",
+   "c": "El Ministerio de Fomento español",
+   "d": "ASTM"
+  },
+  "correct": "b",
+  "correctText": "El CEN (Comité Europeo de Normalización)",
+  "note": null
+ },
+ {
+  "id": 188,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "4.2. El CTE DB SE-A",
+  "question": "El CTE DB SE-A corresponde al Documento Básico de Seguridad Estructural en:",
+  "options": {
+   "a": "Cimentaciones",
+   "b": "Acero",
+   "c": "Hormigón",
+   "d": "Madera"
+  },
+  "correct": "b",
+  "correctText": "Acero",
+  "note": null
+ },
+ {
+  "id": 189,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "4.3. La EAE 2011",
+  "question": "La EAE es prácticamente una copia literal de qué norma en cuanto a la resistencia de las secciones:",
+  "options": {
+   "a": "De la EN 1993",
+   "b": "Del CTE",
+   "c": "De la ISO 9001",
+   "d": "De ninguna, es totalmente original"
+  },
+  "correct": "a",
+  "correctText": "De la EN 1993",
+  "note": null
+ },
+ {
+  "id": 190,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "4.4. Coexistencia de la CTE, SE-A y EAE",
+  "question": "En cuanto a perfiles tubulares rectangulares (RHS), tanto la EAE como el CTE toman como \"c\" la parte plana del alma, mientras que el programa TRICALC utiliza el criterio de:",
+  "options": {
+   "a": "La EN 1993 (longitud total menos 3·espesor)",
+   "b": "Una media entre ambas normas",
+   "c": "Ignorar el valor de \"c\"",
+   "d": "Multiplicar por dos el valor del CTE"
+  },
+  "correct": "a",
+  "correctText": "La EN 1993 (longitud total menos 3·espesor)",
+  "note": null
+ },
+ {
+  "id": 191,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "4.5. Diferencias de las tres normas",
+  "question": "Respecto a la interacción entre axil y flexión en secciones de clase 1 o 2, ¿cuál de las tres normas es la más conservadora (la que menos zona resistente contempla)?",
+  "options": {
+   "a": "La EN 1993",
+   "b": "La EAE",
+   "c": "El CTE DB SE-A",
+   "d": "Las tres son idénticas"
+  },
+  "correct": "c",
+  "correctText": "El CTE DB SE-A",
+  "note": null
+ },
+ {
+  "id": 192,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "4.5. Diferencias de las tres normas",
+  "question": "Respecto al Estado Límite de Servicio (flechas), los Eurocódigos:",
+  "options": {
+   "a": "Establecen limitaciones estrictas y universales",
+   "b": "No establecen limitaciones a las flechas, remitiéndose al criterio del cliente",
+   "c": "Prohíben cualquier flecha",
+   "d": "Solo permiten flechas en estructuras de madera"
+  },
+  "correct": "b",
+  "correctText": "No establecen limitaciones a las flechas, remitiéndose al criterio del cliente",
+  "note": null
+ },
+ {
+  "id": 193,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "5.1. Espesor de la pared de tubería",
+  "question": "En la fórmula simplificada de espesor de tubería e = pD/2σ, \"p\" representa:",
+  "options": {
+   "a": "El peso de la tubería",
+   "b": "La presión actuante en el plano horizontal que contiene al eje",
+   "c": "El perímetro de la tubería",
+   "d": "La porosidad del material"
+  },
+  "correct": "b",
+  "correctText": "La presión actuante en el plano horizontal que contiene al eje",
+  "note": null
+ },
+ {
+  "id": 194,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "5.2. Cálculo de una tubería",
+  "question": "La \"Teoría de las tuberías de pared gruesa\" se aplica cuando:",
+  "options": {
+   "a": "Se requiere mayor precisión, considerando la distribución no uniforme del esfuerzo en el espesor",
+   "b": "La tubería es muy delgada",
+   "c": "No existe presión interna",
+   "d": "El material es siempre hormigón"
+  },
+  "correct": "a",
+  "correctText": "Se requiere mayor precisión, considerando la distribución no uniforme del esfuerzo en el espesor",
+  "note": null
+ },
+ {
+  "id": 195,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "5.3. Dilatación térmica",
+  "question": "La dilatación térmica se define como:",
+  "options": {
+   "a": "La disminución de las dimensiones de un cuerpo al enfriarse",
+   "b": "El aumento de longitud, superficie, volumen u otra dimensión métrica de un cuerpo debido al aumento de temperatura",
+   "c": "Un fenómeno exclusivo de los líquidos",
+   "d": "La pérdida de masa por calor"
+  },
+  "correct": "b",
+  "correctText": "El aumento de longitud, superficie, volumen u otra dimensión métrica de un cuerpo debido al aumento de temperatura",
+  "note": null
+ },
+ {
+  "id": 196,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "5.3.1. Dilatación lineal",
+  "question": "La fórmula del incremento de longitud por dilatación lineal es:",
+  "options": {
+   "a": "ΔL = L₀·α·ΔT",
+   "b": "ΔL = L₀/α",
+   "c": "ΔL = α/ΔT",
+   "d": "ΔL = L₀ + α"
+  },
+  "correct": "a",
+  "correctText": "ΔL = L₀·α·ΔT",
+  "note": null
+ },
+ {
+  "id": 197,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "5.3.2. Dilatación superficial",
+  "question": "El coeficiente de dilatación superficial es aproximadamente:",
+  "options": {
+   "a": "Igual al coeficiente de dilatación lineal",
+   "b": "El doble del coeficiente de dilatación lineal",
+   "c": "El triple del coeficiente de dilatación lineal",
+   "d": "La mitad del coeficiente de dilatación lineal"
+  },
+  "correct": "b",
+  "correctText": "El doble del coeficiente de dilatación lineal",
+  "note": null
+ },
+ {
+  "id": 198,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "5.3.3. Dilatación volumétrica",
+  "question": "El coeficiente de dilatación volumétrico de un sólido isótropo es aproximadamente:",
+  "options": {
+   "a": "Igual al coeficiente de dilatación lineal",
+   "b": "El doble del coeficiente de dilatación lineal",
+   "c": "Tres veces el coeficiente de dilatación lineal",
+   "d": "La mitad del coeficiente de dilatación lineal"
+  },
+  "correct": "c",
+  "correctText": "Tres veces el coeficiente de dilatación lineal",
+  "note": null
+ },
+ {
+  "id": 199,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "5.3.4. Dilatación de los líquidos",
+  "question": "El estudio de la dilatación térmica de los líquidos se realiza únicamente en relación a la dilatación:",
+  "options": {
+   "a": "Lineal",
+   "b": "Superficial",
+   "c": "Volumétrica",
+   "d": "Angular"
+  },
+  "correct": "c",
+  "correctText": "Volumétrica",
+  "note": null
+ },
+ {
+  "id": 200,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "5.3.5. Medidas de dilatación",
+  "question": "Según el manual, la dilatación superficial será el cuadrado de la lineal y la dilatación en volumen será ésta elevada a:",
+  "options": {
+   "a": "La unidad",
+   "b": "2",
+   "c": "3",
+   "d": "4"
+  },
+  "correct": "c",
+  "correctText": "3",
+  "note": null
+ },
+ {
+  "id": 201,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "5.4. Compensadores de dilatación",
+  "question": "Los compensadores de dilatación axiales absorben los movimientos especialmente en dirección:",
+  "options": {
+   "a": "Radial",
+   "b": "Longitudinal-axial al recorrido del segmento recto de tubería",
+   "c": "Transversal",
+   "d": "Angular"
+  },
+  "correct": "b",
+  "correctText": "Longitudinal-axial al recorrido del segmento recto de tubería",
+  "note": null
+ },
+ {
+  "id": 202,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "5.4. Compensadores de dilatación",
+  "question": "¿Cuál de las siguientes es una desventaja de los compensadores de dilatación axiales?",
+  "options": {
+   "a": "Se necesita más espacio que con otras soluciones",
+   "b": "Se necesitan puntos de anclaje fuertes y buena guía axial de tubos",
+   "c": "Cambian el movimiento de flujo",
+   "d": "Tienen un coste muy elevado de las piezas"
+  },
+  "correct": "b",
+  "correctText": "Se necesitan puntos de anclaje fuertes y buena guía axial de tubos",
+  "note": null
+ },
+ {
+  "id": 203,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.1. Calderas de vapor",
+  "question": "Una caldera se define como:",
+  "options": {
+   "a": "Un recipiente metálico abierto a presión atmosférica",
+   "b": "Un recipiente metálico cerrado destinado a producir vapor o calentar agua mediante calor a temperatura y presión superiores a la ambiente",
+   "c": "Un elemento estructural de calderería sin función térmica",
+   "d": "Un depósito exclusivamente de almacenamiento de combustible"
+  },
+  "correct": "b",
+  "correctText": "Un recipiente metálico cerrado destinado a producir vapor o calentar agua mediante calor a temperatura y presión superiores a la ambiente",
+  "note": null
+ },
+ {
+  "id": 204,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.1. Calderas de vapor",
+  "question": "La combinación de una caldera y un sobrecalentador se conoce como:",
+  "options": {
+   "a": "Generador de vapor",
+   "b": "Intercambiador de calor",
+   "c": "Pirotubo",
+   "d": "Separador líquido-vapor"
+  },
+  "correct": "a",
+  "correctText": "Generador de vapor",
+  "note": null
+ },
+ {
+  "id": 205,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.1. Calderas de vapor",
+  "question": "En las calderas pirotubulares (de tubos múltiples de humo):",
+  "options": {
+   "a": "El agua circula por dentro de los tubos y los gases por fuera",
+   "b": "El humo y los gases calientes circulan por el interior de los tubos y el agua se encuentra en el exterior",
+   "c": "No existen tubos",
+   "d": "Solo se usan para agua fría"
+  },
+  "correct": "b",
+  "correctText": "El humo y los gases calientes circulan por el interior de los tubos y el agua se encuentra en el exterior",
+  "note": null
+ },
+ {
+  "id": 206,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.1. Calderas de vapor",
+  "question": "En las calderas acuotubulares:",
+  "options": {
+   "a": "El agua o vapor circula por el interior de los tubos y los gases calientes están en contacto con el exterior de éstos",
+   "b": "El agua siempre está fuera de los tubos",
+   "c": "Solo se usan a baja presión",
+   "d": "No requieren agua de gran pureza"
+  },
+  "correct": "a",
+  "correctText": "El agua o vapor circula por el interior de los tubos y los gases calientes están en contacto con el exterior de éstos",
+  "note": null
+ },
+ {
+  "id": 207,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.1. Calderas de vapor",
+  "question": "¿Cuál es una ventaja típica de las calderas pirotubulares frente a las acuotubulares?",
+  "options": {
+   "a": "Menor coste inicial, debido a la simplicidad de diseño",
+   "b": "Mayor seguridad a muy altas presiones",
+   "c": "Menor peso por unidad de potencia generada",
+   "d": "Puesta en marcha extremadamente rápida"
+  },
+  "correct": "a",
+  "correctText": "Menor coste inicial, debido a la simplicidad de diseño",
+  "note": null
+ },
+ {
+  "id": 208,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.1. Calderas de vapor",
+  "question": "¿Cuál es una ventaja típica de las calderas acuotubulares frente a las pirotubulares?",
+  "options": {
+   "a": "Mayor volumen de agua almacenado",
+   "b": "Menor peso por unidad de potencia generada y mayor seguridad para altas presiones",
+   "c": "Menores exigencias de pureza del agua",
+   "d": "Mayor tiempo para subir presión"
+  },
+  "correct": "b",
+  "correctText": "Menor peso por unidad de potencia generada y mayor seguridad para altas presiones",
+  "note": null
+ },
+ {
+  "id": 209,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.2. Espesor de la pared de la caldera",
+  "question": "La tensión circunferencial (o de aro) es un esfuerzo mecánico que aparece en elementos de forma:",
+  "options": {
+   "a": "Cilíndrica o esférica, como resultado de una presión interna o externa",
+   "b": "Exclusivamente cúbica",
+   "c": "Solo en elementos planos",
+   "d": "Únicamente en estructuras de madera"
+  },
+  "correct": "a",
+  "correctText": "Cilíndrica o esférica, como resultado de una presión interna o externa",
+  "note": null
+ },
+ {
+  "id": 210,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.2.1. Cilindros de pared delgada bajo presión interna",
+  "question": "Se considera que un recipiente es de \"pared delgada\" cuando la relación entre el radio interior y el espesor de pared (r/t) es:",
+  "options": {
+   "a": "Menor de 2",
+   "b": "Igual a 1",
+   "c": "De 10 o más",
+   "d": "Siempre infinita"
+  },
+  "correct": "c",
+  "correctText": "De 10 o más",
+  "note": null
+ },
+ {
+  "id": 211,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.2.1. Cilindros de pared delgada bajo presión interna",
+  "question": "Cuando r/t = 10, el error del análisis de pared delgada respecto al esfuerzo máximo real es aproximadamente:",
+  "options": {
+   "a": "Del 50%",
+   "b": "Del 4%",
+   "c": "Del 25%",
+   "d": "Del 0%"
+  },
+  "correct": "b",
+  "correctText": "Del 4%",
+  "note": null
+ },
+ {
+  "id": 212,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.2.2. Tensión circunferencial o radial",
+  "question": "La fórmula de la tensión circunferencial (de aro) en un cilindro de pared delgada es:",
+  "options": {
+   "a": "σ = p·D/(2·t)",
+   "b": "σ = p·D/(4·t)",
+   "c": "σ = p·t/D",
+   "d": "σ = 2·p·D/t"
+  },
+  "correct": "a",
+  "correctText": "σ = p·D/(2·t)",
+  "note": null
+ },
+ {
+  "id": 213,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.2.3. Tensión longitudinal",
+  "question": "La fórmula de la tensión longitudinal en un cilindro de pared delgada es:",
+  "options": {
+   "a": "σ = p·D/(2·t)",
+   "b": "σ = p·D/(4·t)",
+   "c": "σ = p·D²/t",
+   "d": "σ = 4·p·D/t"
+  },
+  "correct": "b",
+  "correctText": "σ = p·D/(4·t)",
+  "note": null
+ },
+ {
+  "id": 214,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.2.3. Tensión longitudinal",
+  "question": "Comparando la tensión circunferencial y la tensión longitudinal en un cilindro de pared delgada sometido a presión interna, se cumple que:",
+  "options": {
+   "a": "Son siempre iguales",
+   "b": "La tensión circunferencial es el doble de la tensión longitudinal",
+   "c": "La tensión longitudinal siempre es mayor",
+   "d": "No existe relación entre ambas"
+  },
+  "correct": "b",
+  "correctText": "La tensión circunferencial es el doble de la tensión longitudinal",
+  "note": null
+ },
+ {
+  "id": 215,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.2.4. Esfera de pared delgada sometida a presiones internas",
+  "question": "La fórmula de la tensión en la pared de una esfera de pared delgada sometida a presión interna es:",
+  "options": {
+   "a": "σ = p·D/(4·t)",
+   "b": "σ = p·D/(2·t)",
+   "c": "σ = p·D²/t",
+   "d": "σ = p·t/D"
+  },
+  "correct": "a",
+  "correctText": "σ = p·D/(4·t)",
+  "note": null
+ },
+ {
+  "id": 216,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.3. Registros y agujeros de hombre",
+  "question": "Las aberturas que permiten el paso de un hombre completo al interior de una caldera se denominan:",
+  "options": {
+   "a": "Tapas de registro (handhole)",
+   "b": "Puertas hombre (manhole)",
+   "c": "Válvulas de purga",
+   "d": "Separadores líquido-vapor"
+  },
+  "correct": "b",
+  "correctText": "Puertas hombre (manhole)",
+  "note": null
+ },
+ {
+  "id": 217,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.3. Registros y agujeros de hombre",
+  "question": "Las tapas de registro (handhole), por su menor tamaño, solo permiten el paso de:",
+  "options": {
+   "a": "Un hombre completo",
+   "b": "Un brazo",
+   "c": "Herramientas pequeñas exclusivamente",
+   "d": "Ningún elemento, son solo decorativas"
+  },
+  "correct": "b",
+  "correctText": "Un brazo",
+  "note": null
+ },
+ {
+  "id": 218,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.4.1. Equipo auxiliar",
+  "question": "Entre la toma de agua y el depósito alimentador del generador de vapor, se instala habitualmente un equipo de:",
+  "options": {
+   "a": "Descalcificación de agua",
+   "b": "Combustión",
+   "c": "Soldadura",
+   "d": "Pintura epoxi"
+  },
+  "correct": "a",
+  "correctText": "Descalcificación de agua",
+  "note": null
+ },
+ {
+  "id": 219,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.4.2. Cálculo de las conducciones de vapor",
+  "question": "Por seguridad, los caudales de vapor calculados se aumentan habitualmente en:",
+  "options": {
+   "a": "Un 50%",
+   "b": "Un 10%",
+   "c": "Un 100%",
+   "d": "No se aumentan nunca"
+  },
+  "correct": "b",
+  "correctText": "Un 10%",
+  "note": null
+ },
+ {
+  "id": 220,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.5.1. Chapas de acero",
+  "question": "El formato estándar de las chapas de acero utilizadas para depósitos es de:",
+  "options": {
+   "a": "1.000 mm x 500 mm",
+   "b": "2.500 mm x 1.250 mm",
+   "c": "5.000 mm x 2.500 mm",
+   "d": "500 mm x 500 mm"
+  },
+  "correct": "b",
+  "correctText": "2.500 mm x 1.250 mm",
+  "note": null
+ },
+ {
+  "id": 221,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.5.2. Chapas de acero inoxidable",
+  "question": "Según la norma EN 10088, un acero se considera inoxidable cuando contiene cromo en una proporción mínima de:",
+  "options": {
+   "a": "5%",
+   "b": "10,5%",
+   "c": "25%",
+   "d": "50%"
+  },
+  "correct": "b",
+  "correctText": "10,5%",
+  "note": null
+ },
+ {
+  "id": 222,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.5.2. Chapas de acero inoxidable",
+  "question": "Los aceros inoxidables austeníticos contienen, además de cromo, más de un 6% de:",
+  "options": {
+   "a": "Carbono",
+   "b": "Níquel",
+   "c": "Manganeso",
+   "d": "Plomo"
+  },
+  "correct": "b",
+  "correctText": "Níquel",
+  "note": null
+ },
+ {
+  "id": 223,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.5.3. Chapas de acero pintadas con resinas epoxi",
+  "question": "La garantía de calidad del recubrimiento de pintura epoxi es aplicable por un período de:",
+  "options": {
+   "a": "1 mes",
+   "b": "12 meses",
+   "c": "5 años",
+   "d": "50 años"
+  },
+  "correct": "b",
+  "correctText": "12 meses",
+  "note": null
+ },
+ {
+  "id": 224,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.5.4. Tornillería",
+  "question": "Los tornillos de cabeza cóncava recubiertos de plástico utilizados en depósitos:",
+  "options": {
+   "a": "Necesitan siempre arandelas",
+   "b": "No necesitan arandelas, gracias a su mayor superficie de apoyo y sellado",
+   "c": "Solo se fabrican en aluminio",
+   "d": "Se usan exclusivamente en aceros inoxidables"
+  },
+  "correct": "b",
+  "correctText": "No necesitan arandelas, gracias a su mayor superficie de apoyo y sellado",
+  "note": null
+ },
+ {
+  "id": 225,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.5.5. Perfiles",
+  "question": "Las dimensiones generales de los perfiles conformados en frío utilizados en depósitos son de:",
+  "options": {
+   "a": "60 x 60 x 60 mm",
+   "b": "10 x 10 x 10 mm",
+   "c": "200 x 200 x 200 mm",
+   "d": "30 x 30 x 30 mm"
+  },
+  "correct": "a",
+  "correctText": "60 x 60 x 60 mm",
+  "note": null
+ },
+ {
+  "id": 226,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.5.6. Anclajes",
+  "question": "En el montaje de depósitos, cada chapa lleva habitualmente:",
+  "options": {
+   "a": "Una sola fijación",
+   "b": "Dos fijaciones (una en la unión entre chapas y otra en el centro)",
+   "c": "Cuatro fijaciones en las esquinas",
+   "d": "Ninguna fijación, solo gravedad"
+  },
+  "correct": "b",
+  "correctText": "Dos fijaciones (una en la unión entre chapas y otra en el centro)",
+  "note": null
+ },
+ {
+  "id": 227,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.5.7. Selladores",
+  "question": "Los selladores más usados mencionados en el manual son masillas a base de:",
+  "options": {
+   "a": "Cemento",
+   "b": "Poliuretano monocomponente",
+   "c": "Cera",
+   "d": "Yeso"
+  },
+  "correct": "b",
+  "correctText": "Poliuretano monocomponente",
+  "note": null
+ },
+ {
+  "id": 228,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.5.8. Techos",
+  "question": "El techo cónico se utiliza normalmente para:",
+  "options": {
+   "a": "Aplicaciones de prevención de incendios exclusivamente",
+   "b": "Aplicaciones industriales, aguas residuales, aguas potables y líquidos que desprendan vapores",
+   "c": "Solo depósitos de PVC",
+   "d": "Únicamente depósitos enterrados"
+  },
+  "correct": "b",
+  "correctText": "Aplicaciones industriales, aguas residuales, aguas potables y líquidos que desprendan vapores",
+  "note": null
+ },
+ {
+  "id": 229,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.5.8. Techos",
+  "question": "El techo plano se utiliza normalmente en depósitos para:",
+  "options": {
+   "a": "Prevención de incendios y riegos, sin vapores que ataquen al galvanizado",
+   "b": "Almacenar productos químicos muy agresivos",
+   "c": "Aplicaciones agrícolas exclusivamente",
+   "d": "Aplicaciones con nieve abundante"
+  },
+  "correct": "a",
+  "correctText": "Prevención de incendios y riegos, sin vapores que ataquen al galvanizado",
+  "note": null
+ },
+ {
+  "id": 230,
+  "unit": "3",
+  "unitName": "Elementos estructurales de calderería y construcciones metálicas",
+  "section": "6.7. Cálculo (selección dimensional del depósito)",
+  "question": "Para seleccionar la dimensión más adecuada de un depósito, las dos medidas básicas que se utilizan son:",
+  "options": {
+   "a": "Diámetro y altura",
+   "b": "Peso y color",
+   "c": "Espesor y peso",
+   "d": "Longitud y anchura únicamente"
+  },
+  "correct": "a",
+  "correctText": "Diámetro y altura",
+  "note": null
+ },
+ {
+  "id": 231,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "El Rigger se define como:",
+  "options": {
+   "a": "El operador de la grúa",
+   "b": "La persona calificada y autorizada para dirigir maniobras de izamiento de carga, comunicándose con el operador de la grúa",
+   "c": "El Gerente de Construcción",
+   "d": "Un tipo de equipo de izaje"
+  },
+  "correct": "b",
+  "correctText": "La persona calificada y autorizada para dirigir maniobras de izamiento de carga, comunicándose con el operador de la grúa",
+  "note": null
+ },
+ {
+  "id": 232,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "Para considerarse \"calificado\" en maniobras de izaje, según el manual, es necesario:",
+  "options": {
+   "a": "Tener más de 5 años de experiencia, sin examen",
+   "b": "Rendir un examen escrito y obtener una nota de 80% o más",
+   "c": "Solo poseer el carné de conducir",
+   "d": "No se requiere ninguna calificación"
+  },
+  "correct": "b",
+  "correctText": "Rendir un examen escrito y obtener una nota de 80% o más",
+  "note": null
+ },
+ {
+  "id": 233,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "La Relación de Pesos (RP) se calcula como:",
+  "options": {
+   "a": "El peso de la carga dividido por la capacidad nominal de la grúa",
+   "b": "La capacidad nominal de la grúa o equipo dividida por el peso de la carga",
+   "c": "La suma de la capacidad nominal y el peso de la carga",
+   "d": "El peso de la carga multiplicado por la altura de izado"
+  },
+  "correct": "b",
+  "correctText": "La capacidad nominal de la grúa o equipo dividida por el peso de la carga",
+  "note": null
+ },
+ {
+  "id": 234,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "Una carga neutra se caracteriza por ser, entre otras cosas:",
+  "options": {
+   "a": "Inflamable y tóxica",
+   "b": "No inflamable, no tóxica, no derramable, no contaminante, con centro de gravedad fijo",
+   "c": "De centro de gravedad variable",
+   "d": "Siempre de tipo humana"
+  },
+  "correct": "b",
+  "correctText": "No inflamable, no tóxica, no derramable, no contaminante, con centro de gravedad fijo",
+  "note": null
+ },
+ {
+  "id": 235,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "La carga humana se refiere a:",
+  "options": {
+   "a": "Cualquier carga con forma humanoide",
+   "b": "El izamiento de personas, realizado solo con elevadores para personas (manlift) y cabrestantes",
+   "c": "Cargas de peso similar al de una persona",
+   "d": "Cargas peligrosas en general"
+  },
+  "correct": "b",
+  "correctText": "El izamiento de personas, realizado solo con elevadores para personas (manlift) y cabrestantes",
+  "note": null
+ },
+ {
+  "id": 236,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "¿Cuál de las siguientes se clasifica como maniobra crítica?",
+  "options": {
+   "a": "Una maniobra con carga neutra de menos del 50% de capacidad nominal y hasta 10 m de altura",
+   "b": "Cualquier maniobra con carga de tipo humana",
+   "c": "Una maniobra hasta 30 metros sin restricciones de giro",
+   "d": "Una maniobra básica sin obstáculos"
+  },
+  "correct": "b",
+  "correctText": "Cualquier maniobra con carga de tipo humana",
+  "note": null
+ },
+ {
+  "id": 237,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "Una maniobra se considera crítica cuando la relación de peso (RP) es:",
+  "options": {
+   "a": "Mayor o igual a 10",
+   "b": "Menor o igual a 4",
+   "c": "Exactamente igual a 1",
+   "d": "Mayor de 20"
+  },
+  "correct": "b",
+  "correctText": "Menor o igual a 4",
+  "note": null
+ },
+ {
+  "id": 238,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "Las maniobras de Grado 1 de supervisión requieren:",
+  "options": {
+   "a": "Delegación total en un capataz",
+   "b": "100% de presencia del encargado de la maniobra del contratista durante su ejecución, sin poder delegar",
+   "c": "Ninguna supervisión",
+   "d": "Solo la presencia del operador de la grúa"
+  },
+  "correct": "b",
+  "correctText": "100% de presencia del encargado de la maniobra del contratista durante su ejecución, sin poder delegar",
+  "note": null
+ },
+ {
+  "id": 239,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "En las maniobras de Grado 3 de supervisión, el encargado de la maniobra puede delegar en maestros mayores o capataces:",
+  "options": {
+   "a": "Las tareas y también la responsabilidad de la maniobra",
+   "b": "Solo las tareas, no la responsabilidad",
+   "c": "Ni las tareas ni la responsabilidad",
+   "d": "Únicamente con autorización del Gerente"
+  },
+  "correct": "b",
+  "correctText": "Solo las tareas, no la responsabilidad",
+  "note": null
+ },
+ {
+  "id": 240,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "Para toda operación de izaje, las grúas de tránsito o con ruedas deben tener los gatos (outriggers):",
+  "options": {
+   "a": "Parcialmente extendidos",
+   "b": "Totalmente extendidos y niveladas, sin excepción",
+   "c": "Plegados",
+   "d": "Solo extendidos en un lado"
+  },
+  "correct": "b",
+  "correctText": "Totalmente extendidos y niveladas, sin excepción",
+  "note": null
+ },
+ {
+  "id": 241,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "Está prohibido ejecutar maniobras de izaje si la grúa:",
+  "options": {
+   "a": "Tiene más de 5 años de antigüedad",
+   "b": "No tiene la tabla de carga, está dañada, modificada, incompleta o no cuenta con sistema IMC",
+   "c": "Es de color distinto al estándar",
+   "d": "No tiene gancho con seguro de un tipo concreto"
+  },
+  "correct": "b",
+  "correctText": "No tiene la tabla de carga, está dañada, modificada, incompleta o no cuenta con sistema IMC",
+  "note": null
+ },
+ {
+  "id": 242,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "Un izamiento se considera crítico, entre otros casos, cuando la carga excede:",
+  "options": {
+   "a": "El 25% de la capacidad de la grúa según la tabla del fabricante",
+   "b": "El 75% de la capacidad de la grúa según la tabla del fabricante",
+   "c": "El 10% de la capacidad de la grúa",
+   "d": "Nunca se considera crítico por este motivo"
+  },
+  "correct": "b",
+  "correctText": "El 75% de la capacidad de la grúa según la tabla del fabricante",
+  "note": null
+ },
+ {
+  "id": 243,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "¿Quién autoriza todo izamiento que sea crítico, según el procedimiento descrito?",
+  "options": {
+   "a": "El operador de la grúa",
+   "b": "El Gerente de Construcción",
+   "c": "Cualquier capataz",
+   "d": "El propietario de la obra exclusivamente"
+  },
+  "correct": "b",
+  "correctText": "El Gerente de Construcción",
+  "note": null
+ },
+ {
+  "id": 244,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "1. Elevación",
+  "question": "Durante un izamiento crítico, debe estar presente:",
+  "options": {
+   "a": "Solo el rigger",
+   "b": "Un miembro del departamento de Seguridad",
+   "c": "Nadie adicional al operador",
+   "d": "Solo personal subcontratado"
+  },
+  "correct": "b",
+  "correctText": "Un miembro del departamento de Seguridad",
+  "note": null
+ },
+ {
+  "id": 245,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "2. Transporte",
+  "question": "Para evitar que las piezas metálicas sufran desplazamientos y deformaciones durante el transporte se utilizan medios auxiliares como:",
+  "options": {
+   "a": "Cunas, traviesas, perfilería y almohadillas de serrín",
+   "b": "Únicamente cuerdas",
+   "c": "Solo pintura protectora",
+   "d": "Cinta adhesiva"
+  },
+  "correct": "a",
+  "correctText": "Cunas, traviesas, perfilería y almohadillas de serrín",
+  "note": null
+ },
+ {
+  "id": 246,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "2. Transporte",
+  "question": "Si una pieza transportada se rechaza por daños durante el transporte:",
+  "options": {
+   "a": "Se desecha automáticamente sin más trámite",
+   "b": "Se marca de forma indeleble",
+   "c": "Se repara sin dejar constancia",
+   "d": "Se envía igualmente a montaje sin advertencia"
+  },
+  "correct": "b",
+  "correctText": "Se marca de forma indeleble",
+  "note": null
+ },
+ {
+  "id": 247,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "2. Transporte",
+  "question": "Si las piezas transportadas superan un ancho de 4 m o una longitud de 18 m, debe utilizarse:",
+  "options": {
+   "a": "Doble grúa de apoyo",
+   "b": "Coche de acompañamiento (por normativa de tráfico)",
+   "c": "Transporte exclusivamente nocturno",
+   "d": "Ningún medio adicional"
+  },
+  "correct": "b",
+  "correctText": "Coche de acompañamiento (por normativa de tráfico)",
+  "note": null
+ },
+ {
+  "id": 248,
+  "unit": "4",
+  "unitName": "Maniobras de traslado de grandes estructuras",
+  "section": "2. Transporte",
+  "question": "Según el manual, se recomienda evitar los transportes de piezas:",
+  "options": {
+   "a": "Por la mañana",
+   "b": "Próximos a fines de semana o días de fiesta, pues pueden sufrir retrasos o paradas",
+   "c": "En días soleados",
+   "d": "Con poco tráfico"
+  },
+  "correct": "b",
+  "correctText": "Próximos a fines de semana o días de fiesta, pues pueden sufrir retrasos o paradas",
+  "note": null
+ }
+]</script>
+<script>
+(function(){
+  const QUESTIONS = JSON.parse(document.getElementById('quiz-data').textContent);
+  const TOTAL = QUESTIONS.length;
+  const STORAGE_KEY = 'uf0606_quiz_progress_v1';
+
+  let answers = {};
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved) answers = JSON.parse(saved);
+  }catch(e){ answers = {}; }
+
+  function saveProgress(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(answers)); }catch(e){}
+  }
+
+  const mainEl = document.getElementById('main');
+  const letters = ['a','b','c','d'];
+
+  // ---- Build DOM grouped by unit, with section dividers ----
+  const unitsMap = {};
+  QUESTIONS.forEach(q => {
+    if(!unitsMap[q.unit]) unitsMap[q.unit] = { name: q.unitName, items: [] };
+    unitsMap[q.unit].items.push(q);
+  });
+
+  const unitKeys = Object.keys(unitsMap).sort((a,b)=>parseInt(a)-parseInt(b));
+
+  unitKeys.forEach(unitKey => {
+    const unitData = unitsMap[unitKey];
+    const section = document.createElement('section');
+    section.className = 'unit-section';
+    section.id = 'unit-' + unitKey;
+
+    const plate = document.createElement('div');
+    plate.className = 'unit-plate';
+    plate.innerHTML = `
+      <div class="unit-num">${unitKey}</div>
+      <div class="unit-titles">
+        <h2>Unidad Didáctica ${unitKey}</h2>
+        <p>${unitData.name}</p>
+      </div>
+      <div class="unit-stat"><b id="unit-${unitKey}-score">0</b> / ${unitData.items.length} aciertos</div>
+    `;
+    section.appendChild(plate);
+
+    let lastSection = null;
+    unitData.items.forEach(q => {
+      if(q.section && q.section !== lastSection){
+        const div = document.createElement('div');
+        div.className = 'section-divider';
+        div.textContent = q.section;
+        section.appendChild(div);
+        lastSection = q.section;
+      }
+      section.appendChild(buildCard(q));
+    });
+
+    mainEl.appendChild(section);
+  });
+
+  function buildCard(q){
+    const card = document.createElement('article');
+    card.className = 'qcard';
+    card.id = 'q-' + q.id;
+    card.dataset.unit = q.unit;
+    card.dataset.qid = q.id;
+
+    const status = answers[q.id] ? (answers[q.id] === q.correct ? 'correct' : 'wrong') : 'unanswered';
+    card.dataset.status = status;
+
+    const head = document.createElement('div');
+    head.className = 'qhead';
+    head.innerHTML = `<div class="qnum">${String(q.id).padStart(3,'0')}</div><div class="qtext">${escapeHtml(q.question)}</div>`;
+    card.appendChild(head);
+
+    const opts = document.createElement('div');
+    opts.className = 'options';
+
+    letters.forEach(letter => {
+      if(!(letter in q.options)) return;
+      const btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.dataset.letter = letter;
+      btn.innerHTML = `<span class="letter">${letter}</span><span class="otext">${escapeHtml(q.options[letter])}</span><span class="mark">✓</span>`;
+      btn.addEventListener('click', () => selectAnswer(q, letter, card));
+      opts.appendChild(btn);
+    });
+    card.appendChild(opts);
+
+    const fb = document.createElement('div');
+    fb.className = 'feedback-slot';
+    card.appendChild(fb);
+
+    if(status !== 'unanswered'){
+      applyAnsweredState(card, q, answers[q.id]);
+    }
+
+    return card;
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function selectAnswer(q, letter, card){
+    if(answers[q.id]) return; // already answered, locked
+    answers[q.id] = letter;
+    saveProgress();
+    applyAnsweredState(card, q, letter);
+    card.dataset.status = (letter === q.correct) ? 'correct' : 'wrong';
+    refreshAll();
+  }
+
+  function applyAnsweredState(card, q, chosenLetter){
+    const buttons = card.querySelectorAll('.opt');
+    buttons.forEach(btn => {
+      const letter = btn.dataset.letter;
+      btn.disabled = true;
+      if(letter === chosenLetter && letter === q.correct){
+        btn.classList.add('is-selected','is-correct');
+      } else if(letter === chosenLetter && letter !== q.correct){
+        btn.classList.add('is-selected','is-wrong');
+      } else if(letter === q.correct){
+        btn.classList.add('is-reveal');
+      } else {
+        btn.classList.add('is-dimmed');
+      }
+    });
+
+    const slot = card.querySelector('.feedback-slot');
+    slot.innerHTML = '';
+    const fb = document.createElement('div');
+    if(chosenLetter === q.correct){
+      fb.className = 'feedback ok';
+      fb.innerHTML = `<span>✓</span><span><b>Correcto.</b> ${q.note ? `<span class="note">${escapeHtml(q.note)}</span>` : ''}</span>`;
+    } else {
+      fb.className = 'feedback bad';
+      fb.innerHTML = `<span>✕</span><span><b>Incorrecto.</b> La respuesta correcta es <b>${q.correct})</b> ${escapeHtml(q.correctText)}.${q.note ? `<span class="note">${escapeHtml(q.note)}</span>` : ''}</span>`;
+    }
+    slot.appendChild(fb);
+  }
+
+  // ---- Stats / gauge / progress ----
+  const pctReadout = document.getElementById('pctReadout');
+  const scoreReadout = document.getElementById('scoreReadout');
+  const progressLabel = document.getElementById('progressLabel');
+  const rulerFill = document.getElementById('ruler');
+  const needleGroup = document.getElementById('needleGroup');
+  const cntAll = document.getElementById('cntAll');
+  const cntPending = document.getElementById('cntPending');
+  const cntWrong = document.getElementById('cntWrong');
+  const cntCorrect = document.getElementById('cntCorrect');
+  const fab = document.getElementById('fab');
+
+  function computeStats(){
+    let answered = 0, correct = 0;
+    const perUnit = {};
+    QUESTIONS.forEach(q=>{
+      if(!perUnit[q.unit]) perUnit[q.unit] = {correct:0,total:0};
+      perUnit[q.unit].total++;
+      if(answers[q.id]){
+        answered++;
+        if(answers[q.id] === q.correct){ correct++; perUnit[q.unit].correct++; }
+      }
+    });
+    return {answered, correct, perUnit};
+  }
+
+  function refreshAll(){
+    const stats = computeStats();
+    const pct = stats.answered ? Math.round(stats.correct / stats.answered * 100) : 0;
+
+    pctReadout.textContent = pct + '%';
+    pctReadout.className = 'pct ' + (pct < 50 ? 'zone-low' : pct < 75 ? 'zone-mid' : 'zone-high');
+    scoreReadout.textContent = `${stats.correct} / ${stats.answered} aciertos`;
+    progressLabel.textContent = `${stats.answered} / ${TOTAL} respondidas`;
+    rulerFill.style.width = (stats.answered / TOTAL * 100) + '%';
+
+    const angle = (pct/100)*180 - 90;
+    needleGroup.style.transform = `rotate(${angle}deg)`;
+
+    cntAll.textContent = TOTAL;
+    cntPending.textContent = TOTAL - stats.answered;
+    cntWrong.textContent = stats.answered - stats.correct;
+    cntCorrect.textContent = stats.correct;
+
+    Object.keys(stats.perUnit).forEach(u=>{
+      const el = document.getElementById('unit-' + u + '-score');
+      if(el) el.textContent = stats.perUnit[u].correct;
+    });
+
+    fab.hidden = stats.answered >= TOTAL;
+  }
+
+  // ---- Filters ----
+  let currentFilter = 'all';
+  document.querySelectorAll('.chip[data-filter]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip[data-filter]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentFilter = chip.dataset.filter;
+      applyFilter();
+    });
+  });
+
+  function applyFilter(){
+    document.querySelectorAll('.qcard').forEach(card => {
+      const status = card.dataset.status;
+      let show = true;
+      if(currentFilter === 'pending') show = status === 'unanswered';
+      else if(currentFilter === 'wrong') show = status === 'wrong';
+      else if(currentFilter === 'correct') show = status === 'correct';
+      card.classList.toggle('hidden', !show);
+    });
+  }
+
+  // re-apply filter visibility whenever a question is answered
+  const originalSelect = selectAnswer;
+  // wrap refreshAll to also reapply filter
+  const _refreshAll = refreshAll;
+  refreshAll = function(){ _refreshAll(); applyFilter(); };
+
+  // ---- Unit nav ----
+  document.querySelectorAll('.chip[data-unit]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const target = document.getElementById('unit-' + chip.dataset.unit);
+      if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  // ---- Reset ----
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if(confirm('¿Seguro que quieres reiniciar todo tu progreso? Esta acción no se puede deshacer.')){
+      answers = {};
+      saveProgress();
+      mainEl.innerHTML = '';
+      unitKeys.forEach(unitKey => {
+        const unitData = unitsMap[unitKey];
+        const section = document.createElement('section');
+        section.className = 'unit-section';
+        section.id = 'unit-' + unitKey;
+        const plate = document.createElement('div');
+        plate.className = 'unit-plate';
+        plate.innerHTML = `
+          <div class="unit-num">${unitKey}</div>
+          <div class="unit-titles">
+            <h2>Unidad Didáctica ${unitKey}</h2>
+            <p>${unitData.name}</p>
+          </div>
+          <div class="unit-stat"><b id="unit-${unitKey}-score">0</b> / ${unitData.items.length} aciertos</div>
+        `;
+        section.appendChild(plate);
+        let lastSection = null;
+        unitData.items.forEach(q => {
+          if(q.section && q.section !== lastSection){
+            const div = document.createElement('div');
+            div.className = 'section-divider';
+            div.textContent = q.section;
+            section.appendChild(div);
+            lastSection = q.section;
+          }
+          section.appendChild(buildCard(q));
+        });
+        mainEl.appendChild(section);
+      });
+      currentFilter = 'all';
+      document.querySelectorAll('.chip[data-filter]').forEach(c => c.classList.remove('active'));
+      document.querySelector('.chip[data-filter="all"]').classList.add('active');
+      refreshAll();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+  });
+
+  // ---- Floating "next pending" button ----
+  fab.addEventListener('click', () => {
+    const next = QUESTIONS.find(q => !answers[q.id]);
+    if(next){
+      const el = document.getElementById('q-' + next.id);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  });
+
+  refreshAll();
+})();
+</script>
+</body>
+</html>
